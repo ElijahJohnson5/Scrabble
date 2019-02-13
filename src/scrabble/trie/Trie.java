@@ -1,6 +1,10 @@
 package scrabble.trie;
 
-import java.util.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Trie {
     private TrieNode root;
@@ -38,26 +42,44 @@ public class Trie {
         return (temp != null && temp.isEndOfWord());
     }
 
-    private Set<TrieNode> getNonFinal(Set<TrieNode> allStates) {
-        Set<TrieNode> nonFinal = new HashSet<>();
-        for (TrieNode t : allStates) {
-            if (!t.isEndOfWord()) {
-                nonFinal.add(t);
+    public String[] getPossibleWords(String tiles) {
+        for (int i = tiles.length() - 1; i > 0; i--) {
+            Set<String> set = permute(tiles.substring(0, i + 1), 0, i);
+            System.out.println(set);
+            for (String s : set) {
+                if (search(s)) {
+                    System.out.println(s);
+                }
             }
         }
-        return nonFinal;
+
+        return null;
     }
 
-    private Set<TrieNode> getFinal(Set<TrieNode> allStates) {
-        Set<TrieNode> finalState = new HashSet<>();
-        for (TrieNode t : allStates) {
-            if (t.isEndOfWord()) {
-                finalState.add(t);
+    private Set<String> permute(String str, int startIndex, int endIndex) {
+        Set<String> set = new HashSet<>();
+        if (startIndex == endIndex) {
+            set.add(str);
+            return set;
+        } else {
+            for (int i = startIndex; i <= endIndex; i++) {
+                str = swap(str, startIndex, i);
+                set.addAll(permute(str, startIndex + 1, endIndex));
+                str = swap(str, startIndex, i);
             }
+
+            return set;
         }
-        return finalState;
     }
 
+    private String swap(String str, int i, int j) {
+        char temp;
+        char[] charArray = str.toCharArray();
+        temp = charArray[i];
+        charArray[i] = charArray[j];
+        charArray[j] = temp;
+        return String.valueOf(charArray);
+    }
 
     @Override
     public String toString() {

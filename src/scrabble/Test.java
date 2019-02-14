@@ -33,7 +33,6 @@ public class Test {
         System.out.println("Number of words in trie " + count);
         endTime = System.nanoTime();
         System.out.println("Time to search " + count + " words in trie " + (endTime - start) / 1000000);
-        trie.getPossibleWords("ABCDEFG");
         //System.out.println(trie.search("AAA"));
 
         start = System.nanoTime();
@@ -52,8 +51,6 @@ public class Test {
         System.out.println("Number of words in dawg " + count);
         endTime = System.nanoTime();
         System.out.println("Time to search " + count + " words in dawg " + (endTime - start) / 1000000);
-        System.out.println(dawg.search("ZYMOID"));
-
     }
 }
 

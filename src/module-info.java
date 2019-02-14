@@ -1,0 +1,4 @@
+module Scrabble {
+
+    exports scrabble;
+}

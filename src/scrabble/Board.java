@@ -9,6 +9,7 @@ import java.util.Arrays;
 public class Board {
     private int size;
     private Tile[][] tiles;
+    private Tile[][] transposedTiles;
 
     public boolean initialize(File boardFile) {
         try {
@@ -18,6 +19,7 @@ public class Board {
             if (line != null) {
                 size = Integer.parseInt(line);
                 tiles = new Tile[size][size];
+                transposedTiles = new Tile[size][size];
             } else {
                 System.out.println("Need a size of the board");
                 return false;
@@ -35,14 +37,18 @@ public class Board {
                     if (s.length() == 2) {
                         if (s.charAt(0) != '.') {
                             tiles[i][j] = new Tile(Integer.parseInt(s.substring(0, 1)), false);
+                            transposedTiles[j][i] = new Tile(Integer.parseInt(s.substring(0, 1)), false);
                         } else if (s.charAt(1) != '.') {
                             tiles[i][j] = new Tile(Integer.parseInt(s.substring(1, 2)), true);
+                            transposedTiles[j][i] = new Tile(Integer.parseInt(s.substring(1, 2)), true);
                         } else if (s.charAt(1) == '.' && s.charAt(0) == '.') {
                             tiles[i][j] = new Tile();
+                            transposedTiles[j][i] = new Tile();
                         }
                         j++;
                     } else if (s.length() == 1) {
                         tiles[i][j] = new Tile(s.charAt(0), 0);
+                        transposedTiles[j][i] = new Tile(s.charAt(0), 0);
                         j++;
                     }
 
@@ -58,6 +64,6 @@ public class Board {
 
     @Override
     public String toString() {
-        return Arrays.deepToString(tiles);
+        return (Arrays.deepToString(tiles) + "\n" + Arrays.deepToString(transposedTiles));
     }
 }

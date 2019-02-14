@@ -8,9 +8,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class Dawg implements DictionaryInterface {
-    private Node startNode;
-    private Map<Node, Node> equivalenceClass;
+public class Dawg implements DictionaryInterface<DawgNode> {
+    private DawgNode startNode;
+    private Map<DawgNode, DawgNode> equivalenceClass;
     private Set<Character> charSet;
     private int transitionCount;
 
@@ -19,7 +19,7 @@ public class Dawg implements DictionaryInterface {
      */
     public Dawg() {
         //Initialize start node and it is not a word
-        startNode = new Node(false);
+        startNode = new DawgNode(false);
         equivalenceClass = new HashMap<>();
         charSet = new TreeSet<>();
     }
@@ -31,7 +31,7 @@ public class Dawg implements DictionaryInterface {
      * @return the string that is the longest prefix
      */
     private String determineLongestPrefix(String str) {
-        Node node = startNode;
+        DawgNode node = startNode;
         int i;
         for (i = 0; i < str.length(); i++) {
             //If we can transition do it otherwise leave the loop
@@ -54,8 +54,8 @@ public class Dawg implements DictionaryInterface {
      * be a size of two with the first object being an i and the
      * second being a node
      */
-    private Map<String, Object> getFirstMultipleTransition(Node startNode, String transStr) {
-        Node temp = startNode;
+    private Map<String, Object> getFirstMultipleTransition(DawgNode startNode, String transStr) {
+        DawgNode temp = startNode;
         int i = 0;
         for (; i < transStr.length(); i++) {
             char curr = transStr.charAt(i);
@@ -85,7 +85,7 @@ public class Dawg implements DictionaryInterface {
      * @param transStr the transition string to remove
      */
     private void removeTransitionPath(String transStr) {
-        Node temp = startNode;
+        DawgNode temp = startNode;
 
         for (int i = 0; i < transStr.length(); i++) {
             //Transition through the string one at a time
@@ -106,16 +106,16 @@ public class Dawg implements DictionaryInterface {
      * @param transToNode the transition string to the pivot node
      * @param trans the transition string to clone up to
      */
-    private void cloneTransitionPath(Node pivotNode, String transToNode, String trans) {
+    private void cloneTransitionPath(DawgNode pivotNode, String transToNode, String trans) {
         //Get the last node to be cloned
-        Node lastNode = pivotNode.transition(trans);
-        Node lastCloned = null;
+        DawgNode lastNode = pivotNode.transition(trans);
+        DawgNode lastCloned = null;
         char lastLabelChar = '\0';
 
         for (int i = trans.length(); i >= 0; i--) {
             String currentString = (i > 0 ? trans.substring(0, i) : null);
-            Node currentTarget = (i > 0 ? pivotNode.transition(currentString) : pivotNode);
-            Node cloned;
+            DawgNode currentTarget = (i > 0 ? pivotNode.transition(currentString) : pivotNode);
+            DawgNode cloned;
 
             //We are at the last node
             if (i == 0) {
@@ -154,7 +154,7 @@ public class Dawg implements DictionaryInterface {
         //Get the first node that has multiple out going transitions
         Map<String, Object> map = getFirstMultipleTransition(startNode, prefix);
         //Get the two things returned can be null
-        Node multipleNode = (Node) map.get("multipleNode");
+        DawgNode multipleNode = (DawgNode) map.get("multipleNode");
         Integer index = (Integer) map.get("charIndex");
 
         //Remove the transition path from startnode to the transStr
@@ -172,9 +172,9 @@ public class Dawg implements DictionaryInterface {
         addTransitionPath(startNode.transition(prefix), suffix);
     }
 
-    private void addTransitionPath(Node startNode, String str) {
+    private void addTransitionPath(DawgNode startNode, String str) {
         if (!str.isEmpty()) {
-            Node temp = startNode;
+            DawgNode temp = startNode;
             for (int i = 0; i < str.length(); i++, transitionCount++) {
                 temp = temp.addTransition(str.charAt(i), (i == str.length() - 1));
 
@@ -192,10 +192,10 @@ public class Dawg implements DictionaryInterface {
      * @param startNode the node to start the minimization at
      * @param transStr the string of transitions to minimize
      */
-    private void minimize(Node startNode, String transStr) {
+    private void minimize(DawgNode startNode, String transStr) {
         char labelChar = transStr.charAt(0);
         //Get the first target node
-        Node targetNode = startNode.transition(labelChar);
+        DawgNode targetNode = startNode.transition(labelChar);
          //If the target has children and the transStr is not empty
         //Recursively call minimize on the target node and the substring of transstr
         if (targetNode.hasTransitions() && !transStr.substring(1).isEmpty()) {
@@ -203,7 +203,7 @@ public class Dawg implements DictionaryInterface {
         }
 
         //Check if we have a node equivalent to the target node
-        Node equivNode = equivalenceClass.get(targetNode);
+        DawgNode equivNode = equivalenceClass.get(targetNode);
 
         //If we dont have equivalence add to the equivalence class and be done
         if (equivNode == null) {
@@ -250,13 +250,13 @@ public class Dawg implements DictionaryInterface {
     @Override
     public boolean search(String word) {
         //Transition from the startNode to the word
-        Node target = startNode.transition(word);
+        DawgNode target = startNode.transition(word);
         //Check if its a word and if its not null
         return (target != null && target.isWord());
     }
 
     @Override
-    public Node getRootDawgNode() {
+    public DawgNode getRootNode() {
         return startNode;
     }
 

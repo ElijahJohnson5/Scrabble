@@ -1,30 +1,13 @@
 package scrabble.trie;
 
-import java.util.HashMap;
-import java.util.Map;
+import scrabble.Node;
 
-
-public class TrieNode {
+public class TrieNode extends Node {
     private int nodeId;
-    private Map<Character, TrieNode> children;
-    private boolean isEndOfWord;
 
     public TrieNode(int nodeId) {
-        children = new HashMap<>();
-        isEndOfWord = false;
+        super();
         this.nodeId = nodeId;
-    }
-
-    public Map<Character, TrieNode> getChildren() {
-        return children;
-    }
-
-    public void setEndOfWord(boolean endOfWord) {
-        isEndOfWord = endOfWord;
-    }
-
-    public boolean isEndOfWord() {
-        return isEndOfWord;
     }
 
     @Override
@@ -34,6 +17,6 @@ public class TrieNode {
 
     @Override
     public String toString() {
-        return ((isEndOfWord) ? "*" : "") + children.toString();
+        return ((isWord) ? "*" : "") + characterNodeMap.toString();
     }
 }

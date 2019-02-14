@@ -1,32 +1,28 @@
 package scrabble.dawg;
 
+import scrabble.Node;
+
 import java.util.*;
 
-public class Node {
-
-    private Map<Character, Node> transitionMap;
-
+public class DawgNode extends Node {
     private int incomingTransition;
     private Integer hashCode;
-    private boolean isWord;
 
-    public Node(boolean isWord) {
-        transitionMap = new TreeMap<>();
+    public DawgNode(boolean isWord) {
+        super();
         hashCode = null;
         this.isWord = isWord;
     }
 
-    public Node(Node node) {
+    public DawgNode(DawgNode node) {
+        super();
         this.isWord = node.isWord;
-        transitionMap = new TreeMap<>(node.transitionMap);
+        characterNodeMap = new TreeMap<>(node.characterNodeMap);
         hashCode = null;
-        for (Node value : transitionMap.values()) {
-            value.incomingTransition++;
+        for (Node value : characterNodeMap.values()) {
+            DawgNode v = (DawgNode) value;
+            v.incomingTransition++;
         }
-    }
-
-    public Map<Character, Node> getTransitionMap() {
-        return transitionMap;
     }
 
     public int getIncomingTransition() {
@@ -34,15 +30,15 @@ public class Node {
     }
 
     public boolean hasTransition(char letter) {
-        return transitionMap.containsKey(letter);
+        return characterNodeMap.containsKey(letter);
     }
 
-    public Node transition(char letter) {
-        return transitionMap.get(letter);
+    public DawgNode transition(char letter) {
+        return (DawgNode)characterNodeMap.get(letter);
     }
 
-    public Node transition(String transStr) {
-        Node temp = this;
+    public DawgNode transition(String transStr) {
+        DawgNode temp = this;
 
         for (int i = 0; i < transStr.length(); i++) {
             temp = temp.transition(transStr.charAt(i));
@@ -52,20 +48,20 @@ public class Node {
         return temp;
     }
 
-    public Node clone() {
-        return new Node(this);
+    public DawgNode clone() {
+        return new DawgNode(this);
     }
 
-    public Node clone(Node parent, char transLabel) {
-        Node clone = new Node(this);
+    public DawgNode clone(DawgNode parent, char transLabel) {
+        DawgNode clone = new DawgNode(this);
         parent.changeTransition(transLabel, this, clone);
 
         return clone;
     }
 
-    public List<Node> getPathNodes(String transStr) {
-        List<Node> list = new LinkedList<>();
-        Node temp = this;
+    public List<DawgNode> getPathNodes(String transStr) {
+        List<DawgNode> list = new LinkedList<>();
+        DawgNode temp = this;
 
         for (int i = 0; i < transStr.length(); i++) {
             temp = temp.transition(transStr.charAt(i));
@@ -76,18 +72,18 @@ public class Node {
         return list;
     }
 
-    public void changeTransition(char letter, Node oldNode, Node newNode) {
+    public void changeTransition(char letter, DawgNode oldNode, DawgNode newNode) {
         oldNode.incomingTransition--;
         newNode.incomingTransition++;
 
-        transitionMap.put(letter, newNode);
+        characterNodeMap.put(letter, newNode);
     }
 
-    public Node addTransition(char letter, boolean isWord) {
-        Node newNode = new Node(isWord);
+    public DawgNode addTransition(char letter, boolean isWord) {
+        DawgNode newNode = new DawgNode(isWord);
         newNode.incomingTransition++;
 
-        transitionMap.put(letter, newNode);
+        characterNodeMap.put(letter, newNode);
 
         return newNode;
     }
@@ -97,15 +93,15 @@ public class Node {
     }
 
     public void removeTransition(char letter) {
-        transitionMap.remove(letter);
+        characterNodeMap.remove(letter);
     }
 
     public boolean hasTransitions() {
-        return !transitionMap.isEmpty();
+        return !characterNodeMap.isEmpty();
     }
 
     public int getTransitionCount() {
-        return transitionMap.size();
+        return characterNodeMap.size();
     }
 
     public void reduceTransitionCount(int toReduce) {
@@ -124,14 +120,14 @@ public class Node {
         isWord = word;
     }
 
-    public static boolean compareTransitions(Node node1, Node node2) {
-        Map<Character, Node> map1 = node1.transitionMap;
-        Map<Character, Node> map2 = node2.transitionMap;
+    public static boolean compareTransitions(DawgNode node1, DawgNode node2) {
+        Map<Character, Node> map1 = node1.characterNodeMap;
+        Map<Character, Node> map2 = node2.characterNodeMap;
 
         if (map1.size() == map2.size()) {
             for (Map.Entry<Character, Node> keyValue : map1.entrySet()) {
                 char current = keyValue.getKey();
-                Node currentNode = keyValue.getValue();
+                DawgNode currentNode = (DawgNode)keyValue.getValue();
 
                 if (!map2.containsKey(current) || !map2.get(current).equals(currentNode)) {
                     return false;
@@ -149,11 +145,11 @@ public class Node {
     public boolean equals(Object obj) {
         if (this == obj) return true;
 
-        if (!(obj instanceof Node)) {
+        if (!(obj instanceof DawgNode)) {
             return false;
         }
 
-        Node that = (Node)obj;
+        DawgNode that = (DawgNode)obj;
         return (isWord == that.isWord && compareTransitions(this, that));
     }
 
@@ -162,7 +158,7 @@ public class Node {
         if (hashCode == null) {
             int hash = 12;
             hash = 34 * hash + (this.isWord ? 1 : 0);
-            hash = 34 * hash + (this.transitionMap != null ? transitionMap.hashCode() : 0);
+            hash = 34 * hash + (this.characterNodeMap != null ? characterNodeMap.hashCode() : 0);
 
             hashCode = hash;
             return hash;

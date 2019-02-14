@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class Trie implements DictionaryInterface {
+public class Trie implements DictionaryInterface<TrieNode> {
     private TrieNode root;
 
     private int nodeId;
@@ -34,32 +34,32 @@ public class Trie implements DictionaryInterface {
     private void insert(String word) {
         TrieNode temp = root;
         for (int i = 0; i < word.length(); i++) {
-            if (!temp.getChildren().containsKey(word.charAt(i))) {
-                temp.getChildren().put(word.charAt(i), new TrieNode(nodeId++));
+            if (!temp.getCharacterNodeMap().containsKey(word.charAt(i))) {
+                temp.getCharacterNodeMap().put(word.charAt(i), new TrieNode(nodeId++));
             }
 
-            temp = temp.getChildren().get(word.charAt(i));
+            temp = (TrieNode)temp.getCharacterNodeMap().get(word.charAt(i));
         }
 
-        temp.setEndOfWord(true);
+        temp.setWord(true);
     }
 
     @Override
     public boolean search(String word) {
         TrieNode temp = root;
         for (int i = 0; i < word.length(); i++) {
-            if (!temp.getChildren().containsKey(word.charAt(i))) {
+            if (!temp.getCharacterNodeMap().containsKey(word.charAt(i))) {
                 return false;
             }
 
-            temp = temp.getChildren().get(word.charAt(i));
+            temp = (TrieNode)temp.getCharacterNodeMap().get(word.charAt(i));
         }
 
-        return (temp != null && temp.isEndOfWord());
+        return (temp != null && temp.isWord());
     }
 
     @Override
-    public TrieNode getRootTrieNode() {
+    public TrieNode getRootNode() {
         return root;
     }
 

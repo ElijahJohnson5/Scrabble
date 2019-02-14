@@ -1,8 +1,4 @@
 package scrabble;
-
-import scrabble.dawg.Node;
-import scrabble.trie.TrieNode;
-
 import java.io.File;
 
 public interface DictionaryInterface {
@@ -11,11 +7,7 @@ public interface DictionaryInterface {
 
     void insert(File dict);
 
-    default Node getRootDawgNode() {
-        return null;
-    }
-
-    default TrieNode getRootTrieNode() {
+    default Node getRootNode() {
         return null;
     }
 }

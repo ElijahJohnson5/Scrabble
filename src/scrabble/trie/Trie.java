@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class Trie implements DictionaryInterface<TrieNode> {
+public class Trie implements DictionaryInterface {
     private TrieNode root;
 
     private int nodeId;

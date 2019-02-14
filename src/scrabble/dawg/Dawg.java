@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class Dawg implements DictionaryInterface<DawgNode> {
+public class Dawg implements DictionaryInterface {
     private DawgNode startNode;
     private Map<DawgNode, DawgNode> equivalenceClass;
     private Set<Character> charSet;

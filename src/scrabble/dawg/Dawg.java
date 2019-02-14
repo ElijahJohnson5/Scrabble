@@ -1,49 +1,27 @@
 package scrabble.dawg;
 
+import scrabble.DictionaryInterface;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class Dawg {
+public class Dawg implements DictionaryInterface {
     private Node startNode;
     private Map<Node, Node> equivalenceClass;
     private Set<Character> charSet;
     private int transitionCount;
 
     /**
-     * Creates a new Directed Acyclic Word Graph based
-     * on the words in dict, separated by new lines
-     * @param dict the file containing the dict to read in
-     * @throws IOException TODO Get rid of this
+     * Creates a new Directed Acyclic Word Graph
      */
-    public Dawg(File dict) throws IOException {
+    public Dawg() {
         //Initialize start node and it is not a word
         startNode = new Node(false);
         equivalenceClass = new HashMap<>();
         charSet = new TreeSet<>();
-        BufferedReader br = new BufferedReader(new FileReader(dict));
-        String curr = "";
-        String prev = "";
-        //Read all lines of dictionary
-        while ((curr = br.readLine()) != null) {
-            int index = calcStartIndex(prev, curr);
-
-            if (index != -1) {
-                //Get the transition sub string and the suffix to add
-                String transSub = prev.substring(0, index);
-                String suffix = prev.substring(index);
-                //Minimize the graph as we go
-                minimize(startNode.transition(transSub), suffix);
-            }
-            //Add the string to the graph
-            addString(curr);
-            prev = curr;
-        }
-
-        //Minimize the final version
-        minimize(startNode, prev);
     }
 
     /**
@@ -269,10 +247,44 @@ public class Dawg {
      * @param word the word to check
      * @return true if the word is in the graph or false it not
      */
+    @Override
     public boolean search(String word) {
         //Transition from the startNode to the word
         Node target = startNode.transition(word);
         //Check if its a word and if its not null
         return (target != null && target.isWord());
+    }
+
+    @Override
+    public Node getRootDawgNode() {
+        return startNode;
+    }
+
+    @Override
+    public void insert(File dict) {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(dict));
+            String curr;
+            String prev = "";
+            //Read all lines of dictionary
+            while ((curr = br.readLine()) != null) {
+                int index = calcStartIndex(prev, curr);
+
+                if (index != -1) {
+                    //Get the transition sub string and the suffix to add
+                    String transSub = prev.substring(0, index);
+                    String suffix = prev.substring(index);
+                    //Minimize the graph as we go
+                    minimize(startNode.transition(transSub), suffix);
+                }
+                //Add the string to the graph
+                addString(curr);
+                prev = curr;
+            }
+            //Minimize the final version
+            minimize(startNode, prev);
+        } catch (IOException e) {
+            System.out.println("Could not read dictionary file");
+        }
     }
 }

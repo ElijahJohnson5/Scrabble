@@ -2,7 +2,11 @@ package scrabble.dawg;
 
 import scrabble.Node;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 
 public class DawgNode extends Node {
     private int incomingTransition;
@@ -17,7 +21,7 @@ public class DawgNode extends Node {
     public DawgNode(DawgNode node) {
         super();
         this.isWord = node.isWord;
-        characterNodeMap = new TreeMap<>(node.characterNodeMap);
+        characterNodeMap = new HashMap<>(node.characterNodeMap);
         hashCode = null;
         for (Node value : characterNodeMap.values()) {
             DawgNode v = (DawgNode) value;

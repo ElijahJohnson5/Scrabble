@@ -1,1 +1,1 @@
-# Scrabble
+# CS-351 Elijah Johnson Scrabble Project

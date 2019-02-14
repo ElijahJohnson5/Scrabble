@@ -8,18 +8,18 @@ import java.util.Arrays;
 
 public class Board {
     private int size;
-    private Tile[][] tiles;
-    private Tile[][] transposedTiles;
+    private BoardSquare[][] tiles;
+    private BoardSquare[][] transposedTiles;
 
-    public boolean initialize(File boardFile) {
+    public boolean initialize(File boardFile, TileManager tileManager) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(boardFile));
             String line;
             line = br.readLine();
             if (line != null) {
                 size = Integer.parseInt(line);
-                tiles = new Tile[size][size];
-                transposedTiles = new Tile[size][size];
+                tiles = new BoardSquare[size][size];
+                transposedTiles = new BoardSquare[size][size];
             } else {
                 System.out.println("Need a size of the board");
                 return false;
@@ -36,19 +36,19 @@ public class Board {
                 for (String s : values) {
                     if (s.length() == 2) {
                         if (s.charAt(0) != '.') {
-                            tiles[i][j] = new Tile(Integer.parseInt(s.substring(0, 1)), false);
-                            transposedTiles[j][i] = new Tile(Integer.parseInt(s.substring(0, 1)), false);
+                            tiles[i][j] = new BoardSquare(Integer.parseInt(s.substring(0, 1)), false);
+                            transposedTiles[j][i] = new BoardSquare(Integer.parseInt(s.substring(0, 1)), false);
                         } else if (s.charAt(1) != '.') {
-                            tiles[i][j] = new Tile(Integer.parseInt(s.substring(1, 2)), true);
-                            transposedTiles[j][i] = new Tile(Integer.parseInt(s.substring(1, 2)), true);
+                            tiles[i][j] = new BoardSquare(Integer.parseInt(s.substring(1, 2)), true);
+                            transposedTiles[j][i] = new BoardSquare(Integer.parseInt(s.substring(1, 2)), true);
                         } else if (s.charAt(1) == '.' && s.charAt(0) == '.') {
-                            tiles[i][j] = new Tile();
-                            transposedTiles[j][i] = new Tile();
+                            tiles[i][j] = new BoardSquare();
+                            transposedTiles[j][i] = new BoardSquare();
                         }
                         j++;
                     } else if (s.length() == 1) {
-                        tiles[i][j] = new Tile(s.charAt(0), 0);
-                        transposedTiles[j][i] = new Tile(s.charAt(0), 0);
+                        tiles[i][j] = new BoardSquare(new Tile(s.charAt(0), tileManager.getTileValue(s.charAt(0))));
+                        transposedTiles[j][i] = new BoardSquare(new Tile(s.charAt(0), tileManager.getTileValue(s.charAt(0))));
                         j++;
                     }
 

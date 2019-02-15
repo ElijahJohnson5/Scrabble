@@ -11,6 +11,23 @@ public class TrieNode extends Node {
     }
 
     @Override
+    public TrieNode transition(char c) {
+        return (TrieNode)characterNodeMap.get(c);
+    }
+
+    @Override
+    public TrieNode transition(String trans) {
+        TrieNode temp = this;
+        int length = trans.length();
+        for (int i = 0; i < length; i++) {
+            temp = temp.transition(trans.charAt(i));
+            if (temp == null) break;
+        }
+
+        return temp;
+    }
+
+    @Override
     public int hashCode() {
         return Integer.toString(nodeId).hashCode();
     }

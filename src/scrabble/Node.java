@@ -12,6 +12,10 @@ abstract public class Node {
         isWord = false;
     }
 
+    abstract public Node transition(char c);
+
+    abstract public Node transition(String trans);
+
     public Map<Character, Node> getCharacterNodeMap() {
         return characterNodeMap;
     }

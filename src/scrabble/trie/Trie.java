@@ -1,16 +1,12 @@
 package scrabble.trie;
 
-
 import scrabble.DictionaryInterface;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class Trie implements DictionaryInterface {
-    private TrieNode root;
-
+public class Trie extends DictionaryInterface {
     private int nodeId;
 
     public Trie() {
@@ -24,6 +20,7 @@ public class Trie implements DictionaryInterface {
             BufferedReader br = new BufferedReader(new FileReader(dict));
             String word;
             while ((word = br.readLine()) != null) {
+                word = word.toUpperCase();
                 insert(word);
             }
         } catch (IOException e) {
@@ -32,7 +29,7 @@ public class Trie implements DictionaryInterface {
     }
 
     private void insert(String word) {
-        TrieNode temp = root;
+        TrieNode temp = (TrieNode)root;
         for (int i = 0; i < word.length(); i++) {
             if (!temp.getCharacterNodeMap().containsKey(word.charAt(i))) {
                 temp.getCharacterNodeMap().put(word.charAt(i), new TrieNode(nodeId++));
@@ -46,12 +43,11 @@ public class Trie implements DictionaryInterface {
 
     @Override
     public boolean search(String word) {
-        TrieNode temp = root;
+        TrieNode temp = (TrieNode)root;
         for (int i = 0; i < word.length(); i++) {
             if (!temp.getCharacterNodeMap().containsKey(word.charAt(i))) {
                 return false;
             }
-
             temp = (TrieNode)temp.getCharacterNodeMap().get(word.charAt(i));
         }
 
@@ -60,7 +56,7 @@ public class Trie implements DictionaryInterface {
 
     @Override
     public TrieNode getRootNode() {
-        return root;
+        return (TrieNode)root;
     }
 
     @Override

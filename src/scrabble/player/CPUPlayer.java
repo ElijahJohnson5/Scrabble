@@ -6,24 +6,27 @@ import scrabble.Tile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class CPUPlayer extends Player {
-    private List<Tile> anchorSquares;
+    private Map<Map<Integer, Integer>, Set<Character>> crossChecks;
 
     public CPUPlayer() {
-        anchorSquares = new ArrayList<>();
+
     }
 
     @Override
     public int takeTurn(Board board, Node rootNode) {
+
         //Generate cross checks
         //Get anchor square
         //Get all legal moves for that anchor square
-        getAnchorSquares(board);
-        for (int i = 0; i < anchorSquares.size(); i++) {
-            //leftPart("", rootNode, )
-        }
         return 0;
+    }
+
+    private void generateCrossChecks() {
+
     }
 
     private void getAnchorSquares(Board board) {

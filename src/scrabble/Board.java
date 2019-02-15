@@ -11,6 +11,12 @@ public class Board {
     private BoardSquare[][] tiles;
     private BoardSquare[][] transposedTiles;
 
+    public Board() {
+        size = 0;
+        tiles = null;
+        transposedTiles = null;
+    }
+
     public boolean initialize(File boardFile, TileManager tileManager) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(boardFile));
@@ -60,6 +66,10 @@ public class Board {
         }
 
         return true;
+    }
+
+    public int getSize() {
+        return size;
     }
 
     @Override

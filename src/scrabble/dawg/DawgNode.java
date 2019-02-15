@@ -37,10 +37,12 @@ public class DawgNode extends Node {
         return characterNodeMap.containsKey(letter);
     }
 
+    @Override
     public DawgNode transition(char letter) {
         return (DawgNode)characterNodeMap.get(letter);
     }
 
+    @Override
     public DawgNode transition(String transStr) {
         DawgNode temp = this;
 

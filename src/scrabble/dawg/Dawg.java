@@ -8,8 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class Dawg implements DictionaryInterface {
-    private DawgNode startNode;
+public class Dawg extends DictionaryInterface {
     private Map<DawgNode, DawgNode> equivalenceClass;
     private Set<Character> charSet;
     private int transitionCount;
@@ -19,7 +18,7 @@ public class Dawg implements DictionaryInterface {
      */
     public Dawg() {
         //Initialize start node and it is not a word
-        startNode = new DawgNode(false);
+        root = new DawgNode(false);
         equivalenceClass = new HashMap<>();
         charSet = new TreeSet<>();
     }
@@ -31,7 +30,7 @@ public class Dawg implements DictionaryInterface {
      * @return the string that is the longest prefix
      */
     private String determineLongestPrefix(String str) {
-        DawgNode node = startNode;
+        DawgNode node = (DawgNode)root;
         int i;
         for (i = 0; i < str.length(); i++) {
             //If we can transition do it otherwise leave the loop
@@ -85,7 +84,7 @@ public class Dawg implements DictionaryInterface {
      * @param transStr the transition string to remove
      */
     private void removeTransitionPath(String transStr) {
-        DawgNode temp = startNode;
+        DawgNode temp = (DawgNode)root;
 
         for (int i = 0; i < transStr.length(); i++) {
             //Transition through the string one at a time
@@ -121,7 +120,7 @@ public class Dawg implements DictionaryInterface {
             if (i == 0) {
                 String transToNodeParent = transToNode.substring(0, transToNode.length() - 1);
                 //Clone from the parent to the pivot node
-                cloned = pivotNode.clone(startNode.transition(transToNodeParent), transToNode.charAt(transToNode.length() - 1));
+                cloned = pivotNode.clone((DawgNode)root.transition(transToNodeParent), transToNode.charAt(transToNode.length() - 1));
             }
             else {
                 //Clone the node
@@ -152,7 +151,7 @@ public class Dawg implements DictionaryInterface {
         String suffix = str.substring(prefix.length());
 
         //Get the first node that has multiple out going transitions
-        Map<String, Object> map = getFirstMultipleTransition(startNode, prefix);
+        Map<String, Object> map = getFirstMultipleTransition((DawgNode)root, prefix);
         //Get the two things returned can be null
         DawgNode multipleNode = (DawgNode) map.get("multipleNode");
         Integer index = (Integer) map.get("charIndex");
@@ -167,9 +166,9 @@ public class Dawg implements DictionaryInterface {
             cloneTransitionPath(multipleNode, transitionPath, transitionToClone);
         }
 
-        //Create new transition path from the startNode transitioned to the prefix
+        //Create new transition path from the root transitioned to the prefix
         //to the suffix
-        addTransitionPath(startNode.transition(prefix), suffix);
+        addTransitionPath((DawgNode)root.transition(prefix), suffix);
     }
 
     private void addTransitionPath(DawgNode startNode, String str) {
@@ -213,7 +212,7 @@ public class Dawg implements DictionaryInterface {
             //Reduce it by one
             targetNode.reduceTransitionCount(1);
             transitionCount -= targetNode.getIncomingTransition();
-            //Change the transition of from the startNode to the targetNode
+            //Change the transition of from the root to the targetNode
             //to be to the equivNode
             startNode.changeTransition(labelChar, targetNode, equivNode);
         }
@@ -249,15 +248,15 @@ public class Dawg implements DictionaryInterface {
      */
     @Override
     public boolean search(String word) {
-        //Transition from the startNode to the word
-        DawgNode target = startNode.transition(word);
+        //Transition from the root to the word
+        DawgNode target = (DawgNode)root.transition(word);
         //Check if its a word and if its not null
         return (target != null && target.isWord());
     }
 
     @Override
     public DawgNode getRootNode() {
-        return startNode;
+        return (DawgNode)root;
     }
 
     @Override
@@ -268,6 +267,7 @@ public class Dawg implements DictionaryInterface {
             String prev = "";
             //Read all lines of dictionary
             while ((curr = br.readLine()) != null) {
+                curr = curr.toUpperCase();
                 int index = calcStartIndex(prev, curr);
 
                 if (index != -1) {
@@ -275,14 +275,14 @@ public class Dawg implements DictionaryInterface {
                     String transSub = prev.substring(0, index);
                     String suffix = prev.substring(index);
                     //Minimize the graph as we go
-                    minimize(startNode.transition(transSub), suffix);
+                    minimize((DawgNode)root.transition(transSub), suffix);
                 }
                 //Add the string to the graph
                 addString(curr);
                 prev = curr;
             }
             //Minimize the final version
-            minimize(startNode, prev);
+            minimize((DawgNode)root, prev);
         } catch (IOException e) {
             System.out.println("Could not read dictionary file");
         }

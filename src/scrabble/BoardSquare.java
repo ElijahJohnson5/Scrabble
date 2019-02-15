@@ -25,6 +25,11 @@ public class BoardSquare {
             letterMultiplier = multiplier;
             wordMultiplier = 1;
         }
+        tile = null;
+    }
+
+    public boolean isEmpty() {
+        return (tile == null);
     }
 
     @Override

@@ -14,12 +14,13 @@ public class Test {
         TileManager tileManager = new TileManager();
         tileManager.initialize(new File("./resources/default_letter_distributions.txt"));
         Board board = new Board();
-        board.initialize(new File("./resources/test_board.txt"), tileManager);
-        System.out.println(board.toString());
-        System.out.println(board.getPotentialAnchorSquares());
-        board.generateCrossChecks(dict);
+        board.initialize(new File("./resources/default_board.txt"), tileManager);
         CPUPlayer player = new CPUPlayer(tileManager);
+
+        long start = System.nanoTime();
         player.takeTurn(board, dict);
+        long end = System.nanoTime();
+        System.out.println("Time for computer to take turn " + (end - start) / 1000000);
     }
 }
 

@@ -1,6 +1,6 @@
 package scrabble.dawg;
 
-import scrabble.DictionaryInterface;
+import scrabble.Dictionary;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class Dawg extends DictionaryInterface {
+public class Dawg extends Dictionary {
     private Map<DawgNode, DawgNode> equivalenceClass;
     private Set<Character> charSet;
     private int transitionCount;

@@ -1,12 +1,12 @@
 package scrabble.trie;
 
-import scrabble.DictionaryInterface;
+import scrabble.Dictionary;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class Trie extends DictionaryInterface {
+public class Trie extends Dictionary {
     private int nodeId;
 
     public Trie() {
@@ -29,16 +29,18 @@ public class Trie extends DictionaryInterface {
     }
 
     private void insert(String word) {
-        TrieNode temp = (TrieNode)root;
-        for (int i = 0; i < word.length(); i++) {
-            if (!temp.getCharacterNodeMap().containsKey(word.charAt(i))) {
-                temp.getCharacterNodeMap().put(word.charAt(i), new TrieNode(nodeId++));
+        if (word.length() > 0) {
+            TrieNode temp = (TrieNode) root;
+            for (int i = 0; i < word.length(); i++) {
+                if (!temp.getCharacterNodeMap().containsKey(word.charAt(i))) {
+                    temp.getCharacterNodeMap().put(word.charAt(i), new TrieNode(nodeId++));
+                }
+
+                temp = (TrieNode) temp.getCharacterNodeMap().get(word.charAt(i));
             }
 
-            temp = (TrieNode)temp.getCharacterNodeMap().get(word.charAt(i));
+            temp.setWord(true);
         }
-
-        temp.setWord(true);
     }
 
     @Override

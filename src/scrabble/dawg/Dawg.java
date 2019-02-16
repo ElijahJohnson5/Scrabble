@@ -1,3 +1,9 @@
+/**
+ * @author Elijah Johnson
+ * @description Implements a directed acyclic word graph
+ * with dawg nodes. Uses less memory than the trie
+ */
+
 package scrabble.dawg;
 
 import scrabble.Dictionary;
@@ -171,6 +177,11 @@ public class Dawg extends Dictionary {
         addTransitionPath((DawgNode)root.transition(prefix), suffix);
     }
 
+    /**
+     * Add a transition path to the node
+     * @param startNode the node to start adding the transition
+     * @param str the str of transitions to add
+     */
     private void addTransitionPath(DawgNode startNode, String str) {
         if (!str.isEmpty()) {
             DawgNode temp = startNode;
@@ -254,37 +265,47 @@ public class Dawg extends Dictionary {
         return (target != null && target.isWord());
     }
 
-    @Override
-    public DawgNode getRootNode() {
-        return (DawgNode)root;
-    }
-
+    /**
+     * Insert a dictionary from a file into the dawg
+     * @param dict the file containing the dictionary each word
+     *            is separated by new lines
+     */
     @Override
     public void insert(File dict) {
+        List<String> words = new ArrayList<>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(dict));
             String curr;
-            String prev = "";
             //Read all lines of dictionary
             while ((curr = br.readLine()) != null) {
+                //Convert to all uppercase
                 curr = curr.toUpperCase();
-                int index = calcStartIndex(prev, curr);
-
-                if (index != -1) {
-                    //Get the transition sub string and the suffix to add
-                    String transSub = prev.substring(0, index);
-                    String suffix = prev.substring(index);
-                    //Minimize the graph as we go
-                    minimize((DawgNode)root.transition(transSub), suffix);
-                }
-                //Add the string to the graph
-                addString(curr);
-                prev = curr;
+                words.add(curr);
             }
-            //Minimize the final version
-            minimize((DawgNode)root, prev);
+            br.close();
         } catch (IOException e) {
             System.out.println("Could not read dictionary file");
         }
+        //Sort the dictionary
+        Collections.sort(words);
+        String prev = "";
+        for (String curr : words) {
+            int index = calcStartIndex(prev, curr);
+
+            if (index != -1) {
+                //Get the transition sub string and the suffix to add
+                String transSub = prev.substring(0, index);
+                String suffix = prev.substring(index);
+                //Minimize the graph as we go
+                minimize((DawgNode)root.transition(transSub), suffix);
+            }
+            //Add the string to the graph
+            addString(curr);
+            prev = curr;
+        }
+        //Minimize the final version
+        minimize((DawgNode)root, prev);
+
+        root.setWord(false);
     }
 }

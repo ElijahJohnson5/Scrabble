@@ -28,6 +28,17 @@ public class BoardSquare {
         tile = null;
     }
 
+    public char getTileCharacter() {
+        if (tile != null) {
+            return tile.getCharacter();
+        }
+        return '.';
+    }
+
+    public Tile getTile() {
+        return tile;
+    }
+
     public boolean isEmpty() {
         return (tile == null);
     }

@@ -10,11 +10,13 @@ public class TileManager {
     private List<Tile> bag;
     private Map<Character, Integer> valueMap;
     private Map<Character, Integer> countMap;
+    private List<Character> keys;
 
     public TileManager() {
         bag = new ArrayList<>();
         valueMap = new HashMap<>();
         countMap = new HashMap<>();
+        keys = null;
     }
 
     public boolean initialize(File letterDist) {
@@ -43,11 +45,33 @@ public class TileManager {
                 bag.add(new Tile(entry.getKey(), valueMap.get(entry.getKey())));
             }
         }
-
+        keys = new ArrayList<>(countMap.keySet());
         return true;
+    }
+
+    public int getValue(String string) {
+        int sum = 0;
+        for (int i = 0; i < string.length(); i++) {
+            sum += getTileValue(string.charAt(i));
+        }
+
+        return sum;
     }
 
     public int getTileValue(char character) {
         return valueMap.get(character);
+    }
+
+    public List<Tile> drawTray() {
+        Random r = new Random();
+        List<Tile> tray = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            char key = keys.get(r.nextInt(keys.size()));
+            tray.add(new Tile(key, valueMap.get(key)));
+            int newCount = countMap.get(key) - 1;
+            countMap.put(key, newCount);
+        }
+
+        return tray;
     }
 }

@@ -9,6 +9,10 @@ public class Tile {
         this.score = score;
     }
 
+    public char getCharacter() {
+        return character;
+    }
+
     public int getScore() {
         return score;
     }

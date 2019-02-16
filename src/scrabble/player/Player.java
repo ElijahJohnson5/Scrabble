@@ -1,12 +1,19 @@
 package scrabble.player;
 
 import scrabble.Board;
-import scrabble.Node;
+import scrabble.Dictionary;
+import scrabble.TileManager;
+import scrabble.Tray;
 
 public abstract class Player {
-    abstract public int takeTurn(Board board, Node rootNode);
+    protected TileManager manager;
+    protected Tray tray;
 
-    protected void legalMove() {
-
+    public Player(TileManager manager) {
+        this.manager = manager;
+        tray = new Tray();
     }
+
+    abstract public int takeTurn(Board board, Dictionary dcit);
+
 }

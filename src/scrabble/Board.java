@@ -9,17 +9,23 @@ import java.util.*;
 public class Board {
     private int size;
     private BoardSquare[][] tiles;
-    private BoardSquare[][] transposedTiles;
     private boolean isEmpty;
+    private boolean isTransposed;
+    private TileManager tileManager;
+
+    private Map<Position, Integer> crossSum;
 
     public Board() {
         size = 0;
         tiles = null;
-        transposedTiles = null;
         isEmpty = true;
+        tileManager = null;
+        crossSum = new HashMap<>();
+        isTransposed = false;
     }
 
     public boolean initialize(File boardFile, TileManager tileManager) {
+        this.tileManager = tileManager;
         try {
             BufferedReader br = new BufferedReader(new FileReader(boardFile));
             String line;
@@ -27,7 +33,6 @@ public class Board {
             if (line != null) {
                 size = Integer.parseInt(line);
                 tiles = new BoardSquare[size][size];
-                transposedTiles = new BoardSquare[size][size];
             } else {
                 System.out.println("Need a size of the board");
                 return false;
@@ -45,19 +50,15 @@ public class Board {
                     if (s.length() == 2) {
                         if (s.charAt(0) != '.') {
                             tiles[i][j] = new BoardSquare(Integer.parseInt(s.substring(0, 1)), false);
-                            transposedTiles[j][i] = new BoardSquare(Integer.parseInt(s.substring(0, 1)), false);
                         } else if (s.charAt(1) != '.') {
                             tiles[i][j] = new BoardSquare(Integer.parseInt(s.substring(1, 2)), true);
-                            transposedTiles[j][i] = new BoardSquare(Integer.parseInt(s.substring(1, 2)), true);
                         } else if (s.charAt(1) == '.' && s.charAt(0) == '.') {
                             tiles[i][j] = new BoardSquare();
-                            transposedTiles[j][i] = new BoardSquare();
                         }
                         j++;
                     } else if (s.length() == 1) {
                         isEmpty = false;
                         tiles[i][j] = new BoardSquare(new Tile(s.charAt(0), tileManager.getTileValue(s.charAt(0))));
-                        transposedTiles[j][i] = new BoardSquare(new Tile(s.charAt(0), tileManager.getTileValue(s.charAt(0))));
                         j++;
                     }
 
@@ -79,17 +80,25 @@ public class Board {
         return isEmpty;
     }
 
-    public Map<Integer, Integer> getPotentialAnchorSquares() {
-        Map<Integer, Integer> potentialAnchorSquares = new HashMap<>();
+    public boolean isEmpty(int row, int col) {
+        return tiles[row][col].isEmpty();
+    }
+
+    public Tile getTile(int row, int col) {
+        return tiles[row][col].getTile();
+    }
+
+    public Set<Position> getPotentialAnchorSquares() {
+        Set<Position> potentialAnchorSquares = new HashSet<>();
         if (isEmpty) {
-            potentialAnchorSquares.put(size / 2, size / 2);
+            potentialAnchorSquares.add(new Position(size / 2, size / 2));
             return potentialAnchorSquares;
         }
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (anyAdjacentFilled(i, j)) {
-                    potentialAnchorSquares.put(i, j);
+                    potentialAnchorSquares.add(new Position(i, j));
                 }
             }
         }
@@ -98,6 +107,9 @@ public class Board {
     }
 
     private boolean anyAdjacentFilled(int row, int col) {
+        if (!tiles[row][col].isEmpty()) {
+            return false;
+        }
         if (row > 0) {
             if (!tiles[row - 1][col].isEmpty()) {
                 return true;
@@ -123,24 +135,133 @@ public class Board {
         return false;
     }
 
-    public Map<Map<Integer, Integer>, Set<Character>> generateCrossChecks() {
-        Map<Map<Integer, Integer>, Set<Character>> crossCheckMap = new HashMap<>();
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (i == 0) {
-                    if (tiles[i][j].isEmpty() && !tiles[i + 1][j].isEmpty()) {
-                        for (char alphabet = 'A'; alphabet <= 'Z'; alphabet++) {
-
-                        }
-                    }
+    private int addToCrossCheck(Map<Integer, Set<Character>> crossCheck, int row, int col, Dictionary dict, boolean prefix) {
+        String string = (prefix ? buildPrefixString(row, col) : buildSuffixString(row, col));
+        Set<Character> c = new HashSet<>();
+        for (char alphabet = 'A'; alphabet <= 'Z'; alphabet++) {
+            if (prefix) {
+                if (dict.search(string + alphabet)) {
+                    c.add(alphabet);
+                }
+            } else {
+                if (dict.search(alphabet + string)) {
+                    c.add(alphabet);
                 }
             }
         }
-        return null;
+        crossCheck.put(row * size + col, c);
+
+        return tileManager.getValue(string);
     }
+
+    public Map<Integer, Set<Character>> generateCrossChecks(Dictionary dict) {
+        this.crossSum.clear();
+        Map<Integer, Set<Character>> crossCheckMap = new HashMap<>();
+        if (isEmpty) {
+            return null;
+        }
+        int crossSum;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                crossSum = checkTiles(dict, crossCheckMap, i, j);
+                if (crossSum != -1) {
+                    this.crossSum.put(new Position(i, j), crossSum);
+                }
+            }
+        }
+        return crossCheckMap;
+    }
+
+    private int checkTiles(Dictionary dict, Map<Integer, Set<Character>> crossCheckMap, int row, int col) {
+        if (isBelow(row, col) && isAbove(row, col)) {
+            String prefix = buildPrefixString(row, col);
+            String suffix = buildSuffixString(row, col);
+            Set<Character> c = new HashSet<>();
+            for (char alphabet = 'A'; alphabet <= 'Z'; alphabet++) {
+                if (dict.search(prefix + alphabet + suffix)) {
+                    c.add(alphabet);
+                }
+            }
+            crossCheckMap.put(row * size + col, c);
+            int prefixValue = tileManager.getValue(prefix);
+            return prefixValue + tileManager.getValue(suffix);
+        }
+        else if (isBelow(row, col)) {
+            return addToCrossCheck(crossCheckMap, row, col, dict, true);
+        }
+        else if (isAbove(row, col)) {
+            return addToCrossCheck(crossCheckMap, row, col, dict, false);
+        }
+
+        return -1;
+    }
+
+    private String buildPrefixString(int startingRow, int col) {
+        int row = startingRow - 1;
+        StringBuilder sb = new StringBuilder();
+        while (row >= 0 && !tiles[row][col].isEmpty()) {
+            sb.insert(0, tiles[row][col].getTileCharacter());
+            row--;
+        }
+
+        return sb.toString();
+    }
+
+    private String buildSuffixString(int startingRow, int col) {
+        int row = startingRow + 1;
+        StringBuilder sb = new StringBuilder();
+        while (row <= size - 1 && !tiles[row][col].isEmpty()) {
+            sb.append(tiles[row][col].getTileCharacter());
+            row++;
+        }
+
+        return sb.toString();
+    }
+
+    private boolean isBelow(int row, int col) {
+        if (row > 0 && tiles[row][col].isEmpty()) {
+            return !tiles[row - 1][col].isEmpty();
+        }
+
+        return false;
+    }
+
+    private boolean isAbove(int row, int col) {
+        if (row < size - 1 && tiles[row][col].isEmpty()) {
+            return !tiles[row + 1][col].isEmpty();
+        }
+
+        return false;
+    }
+
+    public void transpose() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                BoardSquare temp = tiles[i][j];
+                tiles[i][j] = tiles[j][i];
+                tiles[j][i] = temp;
+            }
+        }
+
+        isTransposed = !isTransposed;
+    }
+
+
+    public Map<Position, Integer> getCrossSum() {
+        return crossSum;
+    }
+
+    public boolean isTransposed() {
+        return isTransposed;
+    }
+
+    public int getScoreFromPos(Position pos) {
+        return crossSum.getOrDefault(pos, 0);
+    }
+
 
     @Override
     public String toString() {
-        return (Arrays.deepToString(tiles) + "\n" + Arrays.deepToString(transposedTiles));
+        return (Arrays.deepToString(tiles));
     }
 }

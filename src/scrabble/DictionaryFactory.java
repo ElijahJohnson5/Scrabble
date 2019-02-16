@@ -9,7 +9,7 @@ public class DictionaryFactory {
     }
 
 
-    public static DictionaryInterface createDict(DictionaryType type) {
+    public static Dictionary createDict(DictionaryType type) {
         switch (type) {
             case DAWG:
                 return new Dawg();

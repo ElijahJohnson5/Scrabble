@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class DictionaryInterface {
+public abstract class Dictionary {
     protected Node root;
     public enum Condition {
         PREFIX, SUFFIX, SUBSTRING;

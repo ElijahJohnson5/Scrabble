@@ -104,6 +104,7 @@ public class TileManager {
             int next = r.nextInt(bag.size());
             Tile toGet = bag.get(next);
             tray.add(toGet);
+            bag.remove(toGet);
         }
         return tray;
     }
@@ -114,7 +115,9 @@ public class TileManager {
      */
     public Tile drawOne() {
         Random r = new Random();
-        return bag.get(r.nextInt(bag.size()));
+        Tile toGet = bag.get(r.nextInt(bag.size()));
+        bag.remove(toGet);
+        return toGet;
     }
 
     /**

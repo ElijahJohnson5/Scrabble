@@ -6,6 +6,8 @@
 
 package scrabble;
 
+import javafx.scene.layout.Pane;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,19 @@ public class Tray {
     public Tray() {
         tiles = new ArrayList<>();
     }
+
+    /**
+     * Get all of the displayes of the tiles in the tray
+     * @return the list of panes of the tiles that will be displayed
+     */
+    public List<Pane> getTileDisplay() {
+        List<Pane> displays = new ArrayList<>();
+        for (int i = 0; i < tiles.size(); i++) {
+            displays.add(tiles.get(i).getDisplay());
+        }
+        return displays;
+    }
+
 
     /**
      * Set the tiles to a new list of tiles
@@ -77,17 +92,7 @@ public class Tray {
      * @param toRemove the tiles to remove from the list
      */
     public void removeAll(List<Tile> toRemove) {
-        int j;
-        //Make sure to not remove duplicates
-        for (int i = 0; i < size(); i++) {
-            for (j = 0; j < toRemove.size(); j++) {
-                if (toRemove.get(j).getCharacter() == tiles.get(i).getCharacter()) {
-                    tiles.remove(i);
-                    break;
-                }
-            }
-            toRemove.remove(j);
-        }
+        tiles.removeAll(toRemove);
     }
 
     /**

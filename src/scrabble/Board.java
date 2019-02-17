@@ -455,10 +455,6 @@ public class Board {
         int sum = 0;
         int j;
         int wordMultiplier = 1;
-        //Bonus 50 points for playing all 7
-        if (move.size() == 7) {
-            sum += 50;
-        }
         Position current = new Position(start);
         //Loop through word
         for (int i = 0; i < word.length(); i++) {
@@ -501,7 +497,12 @@ public class Board {
             }
         }
         //Return the sum * the word multiplier
-        return sum * wordMultiplier;
+        //Bonus 50 points for playing all 7
+        sum *= wordMultiplier;
+        if (move.size() == 7) {
+            sum += 50;
+        }
+        return sum;
     }
 
     /**

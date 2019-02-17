@@ -7,6 +7,9 @@
 
 package scrabble;
 
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -21,6 +24,10 @@ public class Board {
     private TileManager tileManager;
     private Map<Position, Integer> crossSum;
 
+    //GUI
+    private boolean initGui;
+    private VBox board;
+
     /**
      * Default values
      */
@@ -31,6 +38,19 @@ public class Board {
         tileManager = null;
         crossSum = new HashMap<>();
         isTransposed = false;
+        initGui = false;
+    }
+
+    /**
+     * Create a board with a vbox
+     * @param board the vbox representing the board
+     *              on the display
+     */
+    public Board(VBox board) {
+        this();
+        this.board = board;
+        //Tell it to do the rest of the gui stuff
+        initGui = true;
     }
 
     /**
@@ -93,8 +113,29 @@ public class Board {
             System.out.println("Could not open the board file");
             return false;
         }
+        //Initialize the gui if it is needed
+        if (initGui) {
+            initializeDisplay();
+        }
 
         return true;
+    }
+
+    /**
+     * Initialize the display of the board for the gui
+     */
+    private void initializeDisplay() {
+        List<HBox> rows = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            HBox row = new HBox();
+            for (int j = 0; j < size; j++) {
+                //Get displays for each BoardSquare
+                row.getChildren().add(tiles[i][j].getDisplay());
+            }
+            rows.add(row);
+        }
+        //Add them all to the board
+        board.getChildren().addAll(rows);
     }
 
     /**
@@ -160,19 +201,32 @@ public class Board {
                         break;
                     }
                 }
+                if (j < tiles.size()) {
+                    tiles.remove(j);
+                }
                 if (toPlay == null) {
                     for (j = 0; j < tiles.size(); j++) {
                         if(tiles.get(j).getCharacter() == word.charAt(i)
                                 || tiles.get(j).isBlank()) {
                             toPlay = tiles.get(j);
+                            if (initGui) {
+                                toPlay.changeBlankText(word.charAt(i));
+                            }
+                            toPlay.setCharacter(word.charAt(i));
                             break;
                         }
                     }
+                    if (j < tiles.size()) {
+                        tiles.remove(j);
+                    }
                 }
-                //Remove the tile we are going to play
-                tiles.remove(j);
                 //Play tile
                 this.tiles[current.getRow()][current.getCol()].playTile(toPlay);
+                if (initGui) {
+                    HBox row = (HBox)board.getChildren().get(current.getRow());
+                    row.getChildren().set(current.getCol(), this.tiles[current.getRow()][current.getCol()].getDisplay());
+                }
+
                 //If it is across play
                 if (across) {
                     //If it is across increment the col of current
@@ -196,6 +250,7 @@ public class Board {
                 }
             }
         }
+        isEmpty = false;
         System.out.println(this);
         //Played successfully
         return true;
@@ -409,24 +464,29 @@ public class Board {
         for (int i = 0; i < word.length(); i++) {
             Tile currentTile = null;
             //Get the tile that is the letter of the current word
-            for (j = 0; j < moveCopy.size(); j++) {
-                if (moveCopy.get(j).getCharacter() == word.charAt(i)) {
-                    currentTile = moveCopy.get(j);
-                    break;
-                }
-            }
-            //If we didnt find one look for blanks
-            if (currentTile == null) {
+            //Remove it from the copy of move
+            if (this.tiles[current.getRow()][current.getCol()].isEmpty()) {
                 for (j = 0; j < moveCopy.size(); j++) {
-                    if (moveCopy.get(j).isBlank()) {
+                    if (moveCopy.get(j).getCharacter() == word.charAt(i)) {
                         currentTile = moveCopy.get(j);
                         break;
                     }
                 }
-            }
-            //Remove it from the copy of move
-            moveCopy.remove(j);
-            if (this.tiles[current.getRow()][current.getCol()].isEmpty()) {
+                if (j < moveCopy.size()) {
+                    moveCopy.remove(j);
+                }
+                //If we didnt find one look for blanks
+                if (currentTile == null) {
+                    for (j = 0; j < moveCopy.size(); j++) {
+                        if (moveCopy.get(j).isBlank()) {
+                            currentTile = moveCopy.get(j);
+                            break;
+                        }
+                    }
+                    if (j < moveCopy.size()) {
+                        moveCopy.remove(j);
+                    }
+                }
                 //Add the score from pos
                 sum += getScoreFromPos(current);
                 //Get the word multiplier

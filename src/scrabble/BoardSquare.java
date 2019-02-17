@@ -6,10 +6,18 @@
 
 package scrabble;
 
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
+
 public class BoardSquare {
     private int wordMultiplier;
     private int letterMultiplier;
     private Tile tile;
+
+    //GUI
+    private Pane pane;
 
     /**
      * Default square not tile
@@ -19,6 +27,46 @@ public class BoardSquare {
         wordMultiplier = 1;
         letterMultiplier = 1;
         tile = null;
+        pane = null;
+    }
+
+    /**
+     * Creates a new display for a board square if it doesnt
+     * exist
+     */
+    private void createDisplay() {
+        if (tile == null) {
+            pane = new Pane();
+            //Size of square
+            Rectangle rect = new Rectangle(50, 50);
+            rect.setStrokeType(StrokeType.INSIDE);
+            rect.setStroke(Color.BLACK);
+            //Color based on multiplier
+            if (wordMultiplier == 1 && letterMultiplier == 1) {
+                rect.setFill(Color.WHITE);
+            } else if (wordMultiplier > 1) {
+                rect.setFill((wordMultiplier == 2) ? Color.PINK : Color.RED);
+            } else if (letterMultiplier > 1) {
+                rect.setFill((letterMultiplier == 2) ? Color.LIGHTBLUE : Color.DARKBLUE);
+            }
+            //Add to pane
+            pane.getChildren().add(rect);
+        }
+        else {
+            pane = tile.getDisplay();
+        }
+    }
+
+    /**
+     * Gets a display if it exists
+     * otherwise creates a new display
+     * @return the pane representing the display
+     */
+    public Pane getDisplay() {
+        if (pane == null) {
+            createDisplay();
+        }
+        return pane;
     }
 
     /**
@@ -71,6 +119,9 @@ public class BoardSquare {
         this.tile = t;
         this.wordMultiplier = 1;
         this.letterMultiplier = 1;
+        if (pane != null) {
+            this.pane = t.getDisplay();
+        }
     }
 
     /**

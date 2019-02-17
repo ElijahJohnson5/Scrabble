@@ -1,3 +1,9 @@
+/**
+ * @author Elijah Johnson
+ * @description Player parent class, abstract
+ * needs to be implemented by children
+ */
+
 package scrabble.player;
 
 import scrabble.Board;

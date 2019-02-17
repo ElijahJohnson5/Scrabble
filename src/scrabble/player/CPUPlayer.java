@@ -1,3 +1,9 @@
+/**
+ * @author Elijah Johnson
+ * @description the cpu player implementation
+ * uses backtracking to generate all possible moves
+ */
+
 package scrabble.player;
 
 import scrabble.*;
@@ -341,13 +347,13 @@ public class CPUPlayer extends Player {
      * @param board the current board state
      */
     private void getPositions(Position anchorPos, Board board) {
-        //Position.transpose() creates new position that
+        //Position.transposed() creates new position that
         //is transposed of old
         if (board.isTransposed()) {
             //Transpose the positions if the board is
-            highestEndPos = currentEndPos.transpose();
-            highestAnchorPos = anchorPos.transpose();
-            highestStartPos = currentStartPos.transpose();
+            highestEndPos = currentEndPos.transposed();
+            highestAnchorPos = anchorPos.transposed();
+            highestStartPos = currentStartPos.transposed();
         } else {
             //Create new positions
             highestStartPos = new Position(currentStartPos);

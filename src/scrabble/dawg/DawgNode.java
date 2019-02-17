@@ -1,6 +1,6 @@
 package scrabble.dawg;
 
-import scrabble.Node;
+import scrabble.DictNode;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class DawgNode extends Node {
+public class DawgNode extends DictNode {
     private int incomingTransition;
     private Integer hashCode;
 
@@ -23,7 +23,7 @@ public class DawgNode extends Node {
         this.isWord = node.isWord;
         characterNodeMap = new HashMap<>(node.characterNodeMap);
         hashCode = null;
-        for (Node value : characterNodeMap.values()) {
+        for (DictNode value : characterNodeMap.values()) {
             DawgNode v = (DawgNode) value;
             v.incomingTransition++;
         }
@@ -118,20 +118,12 @@ public class DawgNode extends Node {
         return incomingTransition >= 2;
     }
 
-    public boolean isWord() {
-        return isWord;
-    }
-
-    public void setWord(boolean word) {
-        isWord = word;
-    }
-
     public static boolean compareTransitions(DawgNode node1, DawgNode node2) {
-        Map<Character, Node> map1 = node1.characterNodeMap;
-        Map<Character, Node> map2 = node2.characterNodeMap;
+        Map<Character, DictNode> map1 = node1.characterNodeMap;
+        Map<Character, DictNode> map2 = node2.characterNodeMap;
 
         if (map1.size() == map2.size()) {
-            for (Map.Entry<Character, Node> keyValue : map1.entrySet()) {
+            for (Map.Entry<Character, DictNode> keyValue : map1.entrySet()) {
                 char current = keyValue.getKey();
                 DawgNode currentNode = (DawgNode)keyValue.getValue();
 

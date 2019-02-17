@@ -1,8 +1,8 @@
 package scrabble.trie;
 
-import scrabble.Node;
+import scrabble.DictNode;
 
-public class TrieNode extends Node {
+public class TrieNode extends DictNode {
     private int nodeId;
 
     public TrieNode(int nodeId) {

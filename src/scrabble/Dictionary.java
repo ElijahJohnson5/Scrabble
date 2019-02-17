@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class Dictionary {
-    protected Node root;
+    protected DictNode root;
     public enum Condition {
         PREFIX, SUFFIX, SUBSTRING;
 
@@ -28,10 +28,10 @@ public abstract class Dictionary {
 
     abstract public void insert(File dict);
 
-    private void getStrings(Set<String> strings, Condition condition, String prefixString, String conditionString, Map<Character, Node> transitionMap) {
-        for (Map.Entry<Character, Node> entry : transitionMap.entrySet()) {
+    private void getStrings(Set<String> strings, Condition condition, String prefixString, String conditionString, Map<Character, DictNode> transitionMap) {
+        for (Map.Entry<Character, DictNode> entry : transitionMap.entrySet()) {
             String newString = prefixString + entry.getKey();
-            Node current = entry.getValue();
+            DictNode current = entry.getValue();
             if (current.isWord() && condition.satisfies(newString, conditionString)) {
                 strings.add(newString);
             }
@@ -47,7 +47,7 @@ public abstract class Dictionary {
 
     public Set<String> startsWith(String prefix) {
         Set<String> strings = new HashSet<>();
-        Node temp = root.transition(prefix);
+        DictNode temp = root.transition(prefix);
         if (temp != null) {
             if (temp.isWord()) strings.add(prefix);
             getStrings(strings, Condition.PREFIX, prefix, prefix, temp.getCharacterNodeMap());
@@ -61,7 +61,7 @@ public abstract class Dictionary {
         return strings;
     }
 
-    public Node getRootNode() {
+    public DictNode getRootNode() {
         return root;
     }
 }

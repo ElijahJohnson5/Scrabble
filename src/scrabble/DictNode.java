@@ -3,20 +3,20 @@ package scrabble;
 import java.util.HashMap;
 import java.util.Map;
 
-abstract public class Node {
-    protected Map<Character, Node> characterNodeMap;
+abstract public class DictNode {
+    protected Map<Character, DictNode> characterNodeMap;
     protected boolean isWord;
 
-    public Node() {
+    public DictNode() {
         characterNodeMap = new HashMap<>();
         isWord = false;
     }
 
-    abstract public Node transition(char c);
+    abstract public DictNode transition(char c);
 
-    abstract public Node transition(String trans);
+    abstract public DictNode transition(String trans);
 
-    public Map<Character, Node> getCharacterNodeMap() {
+    public Map<Character, DictNode> getCharacterNodeMap() {
         return characterNodeMap;
     }
 

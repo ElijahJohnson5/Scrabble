@@ -72,4 +72,19 @@ public class Position {
     public int hashCode() {
         return (row * 50 + col) * 97;
     }
+
+    /**
+     * Override equals so we can use .contains
+     * on collections
+     * @param obj the other obj to check if equals
+     * @return true if obj equals this otherwise false
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Position)) return false;
+
+        Position other = (Position) obj;
+        return (this.row == other.row && this.col == other.col);
+    }
 }

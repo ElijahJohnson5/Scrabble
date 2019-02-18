@@ -24,7 +24,6 @@ public class CPUPlayer extends Player {
     private Position currentStartPos;
     private Position currentEndPos;
     private Position highestEndPos;
-    private int toSubtractFromScore;
 
     /**
      * Constructor that takes tile manager, sets all
@@ -65,7 +64,6 @@ public class CPUPlayer extends Player {
         currentStartPos = null;
         currentEndPos = null;
         highestEndPos = null;
-        toSubtractFromScore = 0;
         highestScoring = 0;
     }
 
@@ -151,8 +149,21 @@ public class CPUPlayer extends Player {
             currentAnchor = new Position(p);
             currentStartPos = new Position(p);
             currentEndPos = new Position(p);
-            //Call backtracking algorithm
-            leftPart("", dict.getRootNode(), count, p, board, crossChecks);
+            if (count > 0 && !board.isEmpty(p.getRow(), p.getCol() - 1)) {
+                StringBuilder sb = new StringBuilder();
+                currentCol = p.getCol() - 1;
+                while (count > 0 && !board.isEmpty(p.getRow(), currentCol)) {
+                    sb.insert(0, board.getTile(p.getRow(), currentCol).getCharacter());
+                    count--;
+                    currentCol--;
+                }
+                if (dict.getRootNode().transition(sb.toString()) != null) {
+                    extendRight("", dict.getRootNode().transition(sb.toString()), p, board, crossChecks);
+                }
+            } else {
+                //Call backtracking algorithm
+                leftPart("", dict.getRootNode(), count, p, board, crossChecks);
+            }
         }
     }
 
@@ -177,59 +188,34 @@ public class CPUPlayer extends Player {
             //Try to extend this word to the right from node n in dict
             //and the current anchor
             //Only start right generation when it is appropriate
-            if (limit > 0 && board.isEmpty(currentStartPos.getRow(), currentStartPos.getCol() - 1)) {
-                extendRight(partialWord, n, anchor, board, crossChecks);
-            }
+            extendRight(partialWord, n, anchor, board, crossChecks);
             if (limit > 0) {
-                currentStartPos = new Position(currentStartPos.getRow(),
-                        currentStartPos.getCol() - 1);
-                if (!board.isEmpty(currentStartPos.getRow(), currentStartPos.getCol())) {
-                    StringBuilder trans = new StringBuilder();
-                    while (limit > 0 && !board.isEmpty(currentStartPos.getRow(), currentStartPos.getCol())) {
-                        char c = board.getTile(currentStartPos.getRow(), currentStartPos.getCol()).getCharacter();
-                        trans.insert(0, c);
-                        limit--;
-                        currentStartPos = new Position(currentStartPos.getRow(), currentStartPos.getCol() - 1);
-                    }
-                    leftPart(partialWord, n.transition(trans.toString()), limit, anchor, board, crossChecks);
-                    currentStartPos = new Position(currentStartPos.getRow(), currentStartPos.getCol() + trans.toString().length());
-                } else {
-                    //For each edge leaving n check if we can extend the word
-                    for (Map.Entry<Character, DictNode> entry :
-                            n.getCharacterNodeMap().entrySet()) {
-                        char key = entry.getKey();
-                        //If we have the tile
-                        if (tray.isInTray(key)) {
-                            //Remove it but save the tile to be added back later
-                            Tile t = tray.removeFromTray(key);
-                            //Add to the current move we are building
-                            currentMove.add(t);
-                            if (t.isBlank()) {
-                                //Make sure the score calculation is correct
-                                //if we have a blank
-                                toSubtractFromScore += manager.getTileValue(key);
-                            }
-                            //Get the correct start position for the word, based off of the limit
-                            //Recursively call the left part with limit - 1
-                            //The partial word + the key. and the node
-                            //transitioned to the next node
-                            leftPart(partialWord + key, n.transition(key),
-                                    limit - 1, anchor, board, crossChecks);
-                            //Reset the to subtractFromScore
-                            if (t.isBlank()) {
-                                toSubtractFromScore = 0;
-                            }
-
-
-                            //Remove from the current move
-                            //and add back to the tray
-                            currentMove.remove(t);
-                            tray.addToTray(t);
-                        }
+                //For each edge leaving n check if we can extend the word
+                for (Map.Entry<Character, DictNode> entry :
+                        n.getCharacterNodeMap().entrySet()) {
+                    char key = entry.getKey();
+                    //If we have the tile
+                    if (tray.isInTray(key)) {
+                        //Remove it but save the tile to be added back later
+                        Tile t = tray.removeFromTray(key);
+                        //Add to the current move we are building
+                        currentMove.add(t);
+                        //Get the correct start position for the word, based off of the limit
+                        currentStartPos = new Position(currentStartPos.getRow(),
+                                currentStartPos.getCol() - 1);
+                        //Recursively call the left part with limit - 1
+                        //The partial word + the key. and the node
+                        //transitioned to the next node
+                        leftPart(partialWord + key, n.transition(key),
+                                limit - 1, anchor, board, crossChecks);
+                        currentStartPos = new Position(currentStartPos.getRow(),
+                                currentStartPos.getCol() + 1);
+                        //Remove from the current move
+                        //and add back to the tray
+                        currentMove.remove(t);
+                        tray.addToTray(t);
                     }
                 }
-                currentStartPos = new Position(currentStartPos.getRow(),
-                        currentStartPos.getCol() + 1);
             }
         }
     }
@@ -294,9 +280,6 @@ public class CPUPlayer extends Player {
                         //Save tile to be added back later
                         Tile t = tray.removeFromTray(key);
                         currentMove.add(t);
-                        if (t.isBlank()) {
-                            toSubtractFromScore += manager.getTileValue(key);
-                        }
                         //Call recursively on the partialWord + key the node
                         // transitioned to the key and update the current
                         // we are on
@@ -304,9 +287,6 @@ public class CPUPlayer extends Player {
                                 new Position(square.getRow(),
                                         square.getCol() + 1),
                                 board, crossChecks);
-                        if (t.isBlank()) {
-                            toSubtractFromScore = 0;
-                        }
                         currentMove.remove(t);
                         tray.addToTray(t);
                     }
@@ -338,7 +318,7 @@ public class CPUPlayer extends Player {
         if (currentStartPos.getCol() + word.length() >= board.getSize()) {
             return;
         } else {
-            int i = 0;
+            int i;
             for (i = currentStartPos.getCol(); i <= currentEndPos.getCol(); i++) {
                 if (anchorPos.getCol() == i && anchorPos.getRow() == currentStartPos.getRow()) {
                     break;
@@ -365,8 +345,7 @@ public class CPUPlayer extends Player {
                         highestStartPos.getCol() + word.length() - 1);
             }
             //Get the value of this word if we played it
-            highestScoring = board.getValue(word, currentMove, currentStartPos)
-                    - toSubtractFromScore;
+            highestScoring = board.getValue(word, currentMove, currentStartPos);
         }
         else {
             //Check if end pos makes sense
@@ -376,7 +355,7 @@ public class CPUPlayer extends Player {
                         currentStartPos.getCol() + word.length() - 1);
             }
             //Get the score for this move minus any blanks
-            int score = board.getValue(word, currentMove, currentStartPos) - toSubtractFromScore;
+            int score = board.getValue(word, currentMove, currentStartPos);
             //If the score is greater than our highest this is our new highest
             if (score > highestScoring) {
                 //Update highest values

@@ -35,7 +35,7 @@ public class ScrabbleGui extends Application {
         primaryStage.setScene(scene);
 
         Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.TRIE);
-        dict.insert(new File("./resources/sowpods.txt"));
+        dict.insert(new File("./resources/dict.txt"));
         TileManager tileManager = new TileManager();
         Board board = new Board(controller.getBoard());
 

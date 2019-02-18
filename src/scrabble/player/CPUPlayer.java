@@ -315,6 +315,10 @@ public class CPUPlayer extends Player {
      * @param board the current board state
      */
     private void legalMove(String word, Position anchorPos, Board board) {
+        if (word.length() < 2) {
+            return;
+        }
+
         if (currentStartPos.getCol() + word.length() >= board.getSize()) {
             return;
         } else {

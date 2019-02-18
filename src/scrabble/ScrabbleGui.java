@@ -51,5 +51,7 @@ public class ScrabbleGui extends Application {
         cpuPlayer.takeTurn(board, dict);
         cpuPlayer.takeTurn(board, dict);
         cpuPlayer.takeTurn(board, dict);
+        cpuPlayer.takeTurn(board, dict);
+        cpuPlayer.takeTurn(board, dict);
     }
 }

@@ -23,6 +23,7 @@ public class Board {
     private boolean isTransposed;
     private TileManager tileManager;
     private Map<Position, Integer> crossSum;
+    private Set<Position> potentialAnchors;
 
     //GUI
     private boolean initGui;
@@ -262,11 +263,11 @@ public class Board {
      * @return the set of positions that a play can be started from
      */
     public Set<Position> getPotentialAnchorSquares() {
-        Set<Position> potentialAnchorSquares = new HashSet<>();
+        potentialAnchors = new HashSet<>();
         //If it is empty the only anchor is the middle square
         if (isEmpty) {
-            potentialAnchorSquares.add(new Position(size / 2, size / 2));
-            return potentialAnchorSquares;
+            potentialAnchors.add(new Position(size / 2, size / 2));
+            return potentialAnchors;
         }
         //Loop through all of the tiles and check
         //if any adjacent squares are filled
@@ -274,12 +275,12 @@ public class Board {
             for (int j = 0; j < size; j++) {
                 if (anyAdjacentFilled(i, j)) {
                     //Add to set if a play can be started here
-                    potentialAnchorSquares.add(new Position(i, j));
+                    potentialAnchors.add(new Position(i, j));
                 }
             }
         }
         //Return the set
-        return potentialAnchorSquares;
+        return potentialAnchors;
     }
 
     /**
@@ -390,15 +391,17 @@ public class Board {
                     //Add the cross sum for this position to the cross sum map
                     this.crossSum.put(new Position(i, j), crossSum);
                 }
-                else if (!tiles[i][j].isEmpty()) {
+                /*else if (!tiles[i][j].isEmpty()) {
                     //Calculate cross sums for non empty tiles
                     String prefix = buildPrefixString(i, j);
                     String suffix = buildSuffixString(i, j);
                     crossSum = tileManager.getValue(prefix + tiles[i][j].getTile().getCharacter() + suffix);
                     this.crossSum.put(new Position(i, j), crossSum);
-                }
+                }*/
             }
         }
+
+        System.out.println(this.crossSum);
         //Return the map
         return crossCheckMap;
     }
@@ -453,6 +456,8 @@ public class Board {
     public int getValue(String word, List<Tile> move, Position start) {
         List<Tile> moveCopy = new ArrayList<>(move);
         int sum = 0;
+        int crossSum = 0;
+        int currentCrossSum = 0;
         int j;
         int wordMultiplier = 1;
         Position current = new Position(start);
@@ -484,11 +489,16 @@ public class Board {
                     }
                 }
                 //Add the score from pos
-                sum += getScoreFromPos(current);
+                currentCrossSum = getScoreFromPos(current);
                 //Get the word multiplier
                 wordMultiplier *= this.tiles[current.getRow()][current.getCol()].getWordMultiplier();
                 //Get the letter score multiplied by letter multiplier
                 sum += currentTile.getScore() * this.tiles[current.getRow()][current.getCol()].getLetterMultiplier();
+                if (potentialAnchors.contains(current) && this.tiles[current.getRow()][current.getCol()].getWordMultiplier() > 1) {
+                    sum += currentCrossSum;
+                } else {
+                    crossSum += currentCrossSum;
+                }
                 //Increment current
                 current = new Position(current.getRow(), current.getCol() + 1);
             } else {
@@ -502,6 +512,7 @@ public class Board {
         if (move.size() == 7) {
             sum += 50;
         }
+        sum += crossSum;
         return sum;
     }
 

@@ -177,7 +177,7 @@ public class CPUPlayer extends Player {
             //Try to extend this word to the right from node n in dict
             //and the current anchor
             //Only start right generation when it is appropriate
-            if (limit >= 1 && board.isEmpty(currentStartPos.getRow(), currentStartPos.getCol() - 1)) {
+            if (limit > 0 && board.isEmpty(currentStartPos.getRow(), currentStartPos.getCol() - 1)) {
                 extendRight(partialWord, n, anchor, board, crossChecks);
             }
             if (limit > 0) {

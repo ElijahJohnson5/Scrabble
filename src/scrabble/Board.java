@@ -7,6 +7,7 @@
 
 package scrabble;
 
+import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -490,6 +491,7 @@ public class Board {
                 }
                 //Add the score from pos
                 currentCrossSum = getScoreFromPos(current);
+                currentCrossSum -= prefixOrSuffixContainsBlank(current);
                 //Get the word multiplier
                 wordMultiplier *= this.tiles[current.getRow()][current.getCol()].getWordMultiplier();
                 //Get the letter score multiplied by letter multiplier
@@ -514,6 +516,23 @@ public class Board {
         }
         sum += crossSum;
         return sum;
+    }
+
+    private int prefixOrSuffixContainsBlank(Position currentPos) {
+        int toSubtract = 0;
+        if (currentPos.getRow() > 0 && !tiles[currentPos.getRow() - 1][currentPos.getCol()].isEmpty()) {
+            if (tiles[currentPos.getRow() - 1][currentPos.getCol()].getTile().isBlank()) {
+                toSubtract += tileManager.getTileValue(tiles[currentPos.getRow() - 1][currentPos.getCol()].getTileCharacter());
+            }
+        }
+
+        if (currentPos.getRow() < size - 1 && !tiles[currentPos.getRow() + 1][currentPos.getCol()].isEmpty()) {
+            if (tiles[currentPos.getRow() + 1][currentPos.getCol()].getTile().isBlank()) {
+                toSubtract += tileManager.getTileValue(tiles[currentPos.getRow() + 1][currentPos.getCol()].getTileCharacter());
+            }
+        }
+
+        return toSubtract;
     }
 
     /**

@@ -90,11 +90,11 @@ public class Board {
                         if (s.charAt(0) != '.') {
                             //Letter multiplier
                             tiles[i][j] = new BoardSquare(
-                                    Integer.parseInt(s.substring(0, 1)), false);
+                                    Integer.parseInt(s.substring(0, 1)), true);
                         } else if (s.charAt(1) != '.') {
                             //Word multiplier
                             tiles[i][j] = new BoardSquare(
-                                    Integer.parseInt(s.substring(1, 2)), true);
+                                    Integer.parseInt(s.substring(1, 2)), false);
                         } else if (s.charAt(1) == '.' && s.charAt(0) == '.') {
                             //Default multipliers
                             tiles[i][j] = new BoardSquare();

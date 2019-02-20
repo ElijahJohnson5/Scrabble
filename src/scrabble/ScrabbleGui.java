@@ -34,7 +34,7 @@ public class ScrabbleGui extends Application {
         primaryStage.setTitle("Scrabble");
         primaryStage.setScene(scene);
 
-        Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.TRIE);
+        Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.DAWG);
         dict.insert(new File("./resources/dict.txt"));
         TileManager tileManager = new TileManager();
         Board board = new Board(controller.getBoard());
@@ -46,6 +46,7 @@ public class ScrabbleGui extends Application {
 
         primaryStage.show();
         //Play three moves used for testing
+        long start = System.nanoTime();
         cpuPlayer.takeTurn(board, dict);
         cpuPlayer.takeTurn(board, dict);
         cpuPlayer.takeTurn(board, dict);
@@ -53,5 +54,7 @@ public class ScrabbleGui extends Application {
         cpuPlayer.takeTurn(board, dict);
         cpuPlayer.takeTurn(board, dict);
         cpuPlayer.takeTurn(board, dict);
+        long end = System.nanoTime();
+        System.out.println("Time to take seven moves " + (end - start) / 1000000);
     }
 }

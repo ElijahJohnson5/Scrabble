@@ -24,6 +24,7 @@ public class CPUPlayer extends Player {
     private Position currentStartPos;
     private Position currentEndPos;
     private Position highestEndPos;
+    private String leftOfAnchor;
 
     /**
      * Constructor that takes tile manager, sets all
@@ -39,6 +40,7 @@ public class CPUPlayer extends Player {
         currentMove = new ArrayList<>();
         highestMove = new ArrayList<>();
         hand = null;
+        leftOfAnchor = null;
         resetValues();
     }
 
@@ -158,10 +160,12 @@ public class CPUPlayer extends Player {
                     currentCol--;
                 }
                 if (dict.getRootNode().transition(sb.toString()) != null) {
-                    extendRight("", dict.getRootNode().transition(sb.toString()), p, board, crossChecks);
+                    leftOfAnchor = sb.toString();
+                    extendRight("", dict.getRootNode().transition(leftOfAnchor), p, board, crossChecks);
                 }
             } else {
                 //Call backtracking algorithm
+                leftOfAnchor = null;
                 leftPart("", dict.getRootNode(), count, p, board, crossChecks);
             }
         }
@@ -349,7 +353,7 @@ public class CPUPlayer extends Player {
                         highestStartPos.getCol() + word.length() - 1);
             }
             //Get the value of this word if we played it
-            highestScoring = board.getValue(word, currentMove, currentStartPos);
+            highestScoring = board.getValue(word, currentMove, currentStartPos) + (leftOfAnchor == null ? 0 : manager.getValue(leftOfAnchor));
         }
         else {
             //Check if end pos makes sense
@@ -359,7 +363,7 @@ public class CPUPlayer extends Player {
                         currentStartPos.getCol() + word.length() - 1);
             }
             //Get the score for this move minus any blanks
-            int score = board.getValue(word, currentMove, currentStartPos);
+            int score = board.getValue(word, currentMove, currentStartPos) + (leftOfAnchor == null ? 0 : manager.getValue(leftOfAnchor));
             //If the score is greater than our highest this is our new highest
             if (score > highestScoring) {
                 //Update highest values

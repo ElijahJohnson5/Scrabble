@@ -39,13 +39,13 @@ public class ScrabbleGui extends Application {
         primaryStage.setTitle("Scrabble");
         primaryStage.setScene(scene);
 
-        Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.TRIE);
-        dict.insert(new File("./resources/dict.txt"));
+        Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.DAWG);
+        dict.insert(new File(getClass().getResource("../dict.txt").getPath()));
         TileManager tileManager = new TileManager();
         Board board = new Board(controller.getBoard());
 
-        tileManager.initialize(new File("./resources/default_letter_distributions.txt"));
-        board.initialize(new File("./resources/default_board.txt"), tileManager);
+        tileManager.initialize(new File(getClass().getResource("../default_letter_distributions.txt").getPath()));
+        board.initialize(new File(getClass().getResource("../default_board.txt").getPath()), tileManager);
         CPUPlayer cpuPlayer = new CPUPlayer(tileManager, controller.getComputerHand());
         currentPlayer = cpuPlayer;
         CPUPlayer cpuPlayer2 = new CPUPlayer(tileManager, controller.getPlayerHand());

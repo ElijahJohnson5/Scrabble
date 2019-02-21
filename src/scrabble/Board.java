@@ -58,14 +58,13 @@ public class Board {
     /**
      * Initialize from a file representing a board
      * along with a tile manager
-     * @param boardFile the file representing the board
+     * @param br the file representing the board
      * @param tileManager the tile manager used by the players, used to calculate scores
      * @return true if initialized correctly otherwise false
      */
-    public boolean initialize(File boardFile, TileManager tileManager) {
+    public boolean initialize(BufferedReader br, TileManager tileManager) {
         this.tileManager = tileManager;
         try {
-            BufferedReader br = new BufferedReader(new FileReader(boardFile));
             String line;
             line = br.readLine();
             //First line is size of board
@@ -141,7 +140,6 @@ public class Board {
         String line;
         for (int i = 0; i < size; i++) {
             line = in.nextLine();
-            System.out.println(line);
             parseLine(line, i);
         }
     }
@@ -663,6 +661,15 @@ public class Board {
      */
     @Override
     public String toString() {
-        return (Arrays.deepToString(tiles));
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                sb.append(tiles[i][j].toString());
+            }
+            if (i != size - 1) {
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
     }
 }

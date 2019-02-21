@@ -267,14 +267,13 @@ public class Dawg extends Dictionary {
 
     /**
      * Insert a dictionary from a file into the dawg
-     * @param dict the file containing the dictionary each word
+     * @param br the file containing the dictionary each word
      *            is separated by new lines
      */
     @Override
-    public void insert(File dict) {
+    public void insert(BufferedReader br) {
         List<String> words = new ArrayList<>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(dict));
             String curr;
             //Read all lines of dictionary
             while ((curr = br.readLine()) != null) {

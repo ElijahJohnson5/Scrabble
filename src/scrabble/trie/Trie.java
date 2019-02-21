@@ -27,14 +27,13 @@ public class Trie extends Dictionary {
 
     /**
      * Inserts a list of words in a file into the dictionary
-     * @param dict the file containing the dictionary to be stored
+     * @param br the file containing the dictionary to be stored
      *             int the trie
      */
     @Override
-    public void insert(File dict){
+    public void insert(BufferedReader br){
         List<String> words = new ArrayList<>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(dict));
             String word;
             //Read each word and make it uppercase
             while ((word = br.readLine()) != null) {

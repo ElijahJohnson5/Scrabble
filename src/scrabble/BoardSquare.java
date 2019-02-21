@@ -172,7 +172,21 @@ public class BoardSquare {
         if (tile != null) {
             return tile.toString();
         } else {
-            return "{" + letterMultiplier + ", " + wordMultiplier + "}";
+            StringBuilder sb = new StringBuilder();
+            if (wordMultiplier > 1) {
+                sb.append(wordMultiplier);
+            } else {
+                sb.append('.');
+            }
+
+            if (letterMultiplier > 1) {
+                sb.append(letterMultiplier);
+            } else {
+                sb.append('.');
+            }
+
+            sb.append(" ");
+            return sb.toString();
         }
     }
 }

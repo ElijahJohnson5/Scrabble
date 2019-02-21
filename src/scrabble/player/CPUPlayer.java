@@ -27,27 +27,8 @@ public class CPUPlayer extends Player {
     private Position highestEndPos;
     private String leftOfAnchor;
 
-    /**
-     * Constructor that takes tile manager, sets all
-     * values to correct initial state
-     * @param manager the manager for the tiles,
-     *                handles drawing tiles
-     */
-    public CPUPlayer(TileManager manager) {
-        super(manager);
-        tray.setTiles(manager.drawTray(7));
-        System.out.println(tray);
-        legalMoves = new HashSet<>();
-        currentMove = new ArrayList<>();
-        highestMove = new ArrayList<>();
-        hand = null;
-        leftOfAnchor = null;
-        resetValues();
-    }
-
     public CPUPlayer(TileManager manager, List<Tile> tray) {
         super(manager, tray);
-        System.out.println(this.tray);
         legalMoves = new HashSet<>();
         currentMove = new ArrayList<>();
         highestMove = new ArrayList<>();
@@ -59,7 +40,6 @@ public class CPUPlayer extends Player {
     public CPUPlayer(TileManager manager, HBox hand) {
         super(manager, hand);
         tray.setTiles(manager.drawTray(7));
-        System.out.println(tray);
         legalMoves = new HashSet<>();
         currentMove = new ArrayList<>();
         highestMove = new ArrayList<>();
@@ -89,6 +69,10 @@ public class CPUPlayer extends Player {
         } else {
             return highestScoringWord;
         }
+    }
+
+    public int getWordScore() {
+        return highestScoring;
     }
 
     /**

@@ -8,7 +8,7 @@ package scrabble;
 import scrabble.player.CPUPlayer;
 
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -19,14 +19,20 @@ public class CommandLineSolver {
     private Board board;
     private TileManager manager;
 
-    public CommandLineSolver(File dictFile) {
+    public CommandLineSolver(BufferedReader br) {
         dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.TRIE);
-        dict.insert(dictFile);
+        dict.insert(br);
         board = new Board();
         cpuPlayer = null;
         manager = new TileManager();
-        System.out.println(getClass().getResource("../default_letter_distributions.txt").getPath());
-        manager.initialize(new File(getClass().getResource("../default_letter_distributions.txt").getPath()));
+        BufferedReader letters = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/default_letter_distributions.txt")));
+        manager.initialize(letters);
+        try {
+            letters.close();
+            br.close();
+        } catch (IOException e) {
+            System.out.println("Could not close files");
+        }
     }
 
     public static void main(String[] args) {
@@ -34,12 +40,23 @@ public class CommandLineSolver {
             System.out.println("Usage: java CommandLineSolver [DICT FILE]");
             return;
         }
-        CommandLineSolver commandLineSolver = new CommandLineSolver(new File(args[0]));
-        System.out.println(commandLineSolver.findBest());
+        CommandLineSolver commandLineSolver;
+        try {
+            commandLineSolver = new CommandLineSolver(new BufferedReader(new FileReader(new File(args[0]))));
+        } catch (IOException e) {
+            System.out.println("Could not read dictionary file");
+            return;
+        }
+        Scanner in = new Scanner(System.in);
+        while (in.hasNext()) {
+            long start = System.currentTimeMillis();
+            commandLineSolver.findBest(in);
+            long end = System.currentTimeMillis();
+            System.out.println("Time to find move: " + (end - start) + "ms");
+        }
     }
 
-    public String findBest() {
-        Scanner in = new Scanner(System.in);
+    public String findBest(Scanner in) {
         board.initialize(in, manager);
         String lastLine = in.nextLine();
         lastLine = lastLine.toUpperCase();
@@ -49,6 +66,9 @@ public class CommandLineSolver {
         }
         cpuPlayer = new CPUPlayer(manager, tray);
         cpuPlayer.takeTurn(board, dict);
+        System.out.println(board);
+        System.out.println("Word score: " + cpuPlayer.getWordScore());
+        System.out.println("Word played: " + cpuPlayer.getWordPlayed());
         return cpuPlayer.getWordPlayed();
     }
 }

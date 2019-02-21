@@ -7,10 +7,9 @@
 package scrabble.player;
 
 import javafx.scene.layout.HBox;
-import scrabble.Board;
-import scrabble.Dictionary;
-import scrabble.TileManager;
-import scrabble.Tray;
+import scrabble.*;
+
+import java.util.List;
 
 public abstract class Player {
     protected TileManager manager;
@@ -18,6 +17,13 @@ public abstract class Player {
 
     //GUI
     protected HBox hand;
+
+    public Player(TileManager manager, List<Tile> tray) {
+        this(manager);
+        this.tray.setTiles(tray);
+    }
+
+
     /**
      * Set the manager of each player
      * @param manager the tile manager for the tiles

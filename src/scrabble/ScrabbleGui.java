@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class ScrabbleGui extends Application {
     private Player currentPlayer;
-    public final static boolean DEBUG_PRINT = false;
+    public final static boolean DEBUG_PRINT = true;
 
     public static void main(String[] args) {
         launch(args);
@@ -39,7 +39,7 @@ public class ScrabbleGui extends Application {
         primaryStage.setTitle("Scrabble");
         primaryStage.setScene(scene);
 
-        Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.DAWG);
+        Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.TRIE);
         dict.insert(new File("./resources/dict.txt"));
         TileManager tileManager = new TileManager();
         Board board = new Board(controller.getBoard());

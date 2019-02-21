@@ -79,37 +79,7 @@ public class Board {
             //Next size lines are the board
             for (int i = 0; i < size; i++) {
                 line = br.readLine();
-                if (line == null) {
-                    System.out.println("File format is incorrect");
-                    return false;
-                }
-                //Split by spaces for each board square
-                String[] values = line.split(" ");
-                int j = 0;
-                for (String s : values) {
-                    if (s.length() == 2) {
-                        if (s.charAt(0) != '.') {
-                            //Letter multiplier
-                            tiles[i][j] = new BoardSquare(
-                                    Integer.parseInt(s.substring(0, 1)), true);
-                        } else if (s.charAt(1) != '.') {
-                            //Word multiplier
-                            tiles[i][j] = new BoardSquare(
-                                    Integer.parseInt(s.substring(1, 2)), false);
-                        } else if (s.charAt(1) == '.' && s.charAt(0) == '.') {
-                            //Default multipliers
-                            tiles[i][j] = new BoardSquare();
-                        }
-                        j++;
-                    } else if (s.length() == 1) {
-                        //Occupied by tile
-                        isEmpty = false;
-                        tiles[i][j] = new BoardSquare(new Tile(s.charAt(0),
-                                tileManager.getTileValue(s.charAt(0))));
-                        j++;
-                    }
-
-                }
+                parseLine(line, i);
             }
         } catch (IOException e) {
             System.out.println("Could not open the board file");
@@ -121,6 +91,59 @@ public class Board {
         }
 
         return true;
+    }
+
+    private void parseLine(String line, int i) {
+        if (line == null) {
+            System.out.println("File format is incorrect");
+            return;
+        }
+        //Split by spaces for each board square
+        String[] values = line.split(" ");
+        int j = 0;
+        for (String s : values) {
+            if (s.length() == 2) {
+                if (s.charAt(0) != '.' && s.charAt(0) != '1') {
+                    //Letter multiplier
+                    tiles[i][j] = new BoardSquare(
+                            Integer.parseInt(s.substring(0, 1)), true);
+                } else if (s.charAt(1) != '.' && s.charAt(1) != '1') {
+                    //Word multiplier
+                    tiles[i][j] = new BoardSquare(
+                            Integer.parseInt(s.substring(1, 2)), false);
+                } else if ((s.charAt(1) == '.' && s.charAt(0) == '.') || (s.charAt(0) == '1' && s.charAt(1) == '1')) {
+                    //Default multipliers
+                    tiles[i][j] = new BoardSquare();
+                }
+                j++;
+            } else if (s.length() == 1) {
+                int score;
+                if (Character.isUpperCase(s.charAt(0))) {
+                    score = 0;
+                } else {
+                    score = tileManager.getTileValue(s.charAt(0));
+                }
+                s = s.toUpperCase();
+                //Occupied by tile
+                isEmpty = false;
+                tiles[i][j] = new BoardSquare(new Tile(s.charAt(0),
+                        score));
+                j++;
+            }
+        }
+    }
+
+    public void initialize(Scanner in, TileManager manager) {
+        this.tileManager = manager;
+        size = in.nextInt();
+        in.nextLine();
+        tiles = new BoardSquare[size][size];
+        String line;
+        for (int i = 0; i < size; i++) {
+            line = in.nextLine();
+            System.out.println(line);
+            parseLine(line, i);
+        }
     }
 
     /**

@@ -13,6 +13,7 @@ import scrabble.Dictionary;
 import java.util.*;
 
 public class CPUPlayer extends Player {
+    private String highestScoringLeftOfAnchor;
     private String highestScoringWord;
     private int highestScoring;
     private Position highestAnchorPos;
@@ -44,6 +45,17 @@ public class CPUPlayer extends Player {
         resetValues();
     }
 
+    public CPUPlayer(TileManager manager, List<Tile> tray) {
+        super(manager, tray);
+        System.out.println(this.tray);
+        legalMoves = new HashSet<>();
+        currentMove = new ArrayList<>();
+        highestMove = new ArrayList<>();
+        hand = null;
+        leftOfAnchor = null;
+        resetValues();
+    }
+
     public CPUPlayer(TileManager manager, HBox hand) {
         super(manager, hand);
         tray.setTiles(manager.drawTray(7));
@@ -60,6 +72,8 @@ public class CPUPlayer extends Player {
         highestStartPos = null;
         highestAnchorPos = null;
         highestScoringWord = null;
+        highestScoringLeftOfAnchor = null;
+        leftOfAnchor = null;
         currentMove.clear();
         highestMove.clear();
         currentAnchor = null;
@@ -67,6 +81,14 @@ public class CPUPlayer extends Player {
         currentEndPos = null;
         highestEndPos = null;
         highestScoring = 0;
+    }
+
+    public String getWordPlayed() {
+        if (highestScoringLeftOfAnchor != null) {
+            return highestScoringLeftOfAnchor + highestScoringWord;
+        } else {
+            return highestScoringWord;
+        }
     }
 
     /**
@@ -351,6 +373,7 @@ public class CPUPlayer extends Player {
             highestMove.clear();
             highestScoringWord = word;
             highestMove.addAll(currentMove);
+            highestScoringLeftOfAnchor = leftOfAnchor;
             //Get all of the relavent posistions, based on if
             //the board is transposed or not
 
@@ -382,6 +405,7 @@ public class CPUPlayer extends Player {
                 highestScoringWord = word;
                 highestScoring = score;
                 highestMove.addAll(currentMove);
+                highestScoringLeftOfAnchor = leftOfAnchor;
             }
         }
         //Keep a set of all legal moves

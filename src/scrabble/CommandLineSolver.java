@@ -56,7 +56,7 @@ public class CommandLineSolver {
         }
     }
 
-    public String findBest(Scanner in) {
+    public void findBest(Scanner in) {
         board.initialize(in, manager);
         String lastLine = in.nextLine();
         lastLine = lastLine.toUpperCase();
@@ -69,6 +69,5 @@ public class CommandLineSolver {
         System.out.println(board);
         System.out.println("Word score: " + cpuPlayer.getWordScore());
         System.out.println("Word played: " + cpuPlayer.getWordPlayed());
-        return cpuPlayer.getWordPlayed();
     }
 }

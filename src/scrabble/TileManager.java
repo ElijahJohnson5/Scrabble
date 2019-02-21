@@ -67,6 +67,7 @@ public class TileManager {
                 bag.add(new Tile(entry.getKey(), valueMap.get(entry.getKey())));
             }
         }
+        System.out.println("Bag size: " + bag.size());
         return true;
     }
 
@@ -96,17 +97,21 @@ public class TileManager {
      * Draws a new hand of seven tiles
      * @return the newly drawn list of tiles
      */
-    public List<Tile> drawTray() {
-        Random r = new Random();
+    public List<Tile> drawTray(int count) {
         List<Tile> tray = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < count; i++) {
             //Draw each tile randomly
-            int next = r.nextInt(bag.size());
-            Tile toGet = bag.get(next);
-            tray.add(toGet);
-            bag.remove(toGet);
+            Tile toAdd = drawOne();
+            if (toAdd == null) {
+                break;
+            }
+            tray.add(toAdd);
         }
         return tray;
+    }
+
+    public boolean isEmpty() {
+        return bag.isEmpty();
     }
 
     /**
@@ -115,8 +120,12 @@ public class TileManager {
      */
     public Tile drawOne() {
         Random r = new Random();
-        Tile toGet = bag.get(r.nextInt(bag.size()));
-        bag.remove(toGet);
+        Tile toGet = null;
+        if (bag.size() > 0) {
+            int next = r.nextInt(bag.size());
+            toGet = bag.get(next);
+            bag.remove(next);
+        }
         return toGet;
     }
 
@@ -126,10 +135,9 @@ public class TileManager {
      * @param tray the tray to put back
      * @return the newly drawn tray
      */
-    public List<Tile> redrawTray(List<Tile> tray) {
-        List<Tile> newTray = drawTray();
+    public List<Tile> redrawTray(List<Tile> tray, int count) {
+        List<Tile> newTray = drawTray(count);
         bag.addAll(tray);
-        tray.clear();
         return newTray;
     }
 }

@@ -82,7 +82,11 @@ public class Tray {
     public void redrawToSeven(TileManager manager) {
         int size = tiles.size();
         for (int i = size; i < 7; i++) {
-            tiles.add(manager.drawOne());
+            Tile toAdd = manager.drawOne();
+            if (toAdd == null) {
+                break;
+            }
+            tiles.add(toAdd);
         }
     }
 
@@ -118,6 +122,10 @@ public class Tray {
      */
     public void addToTray(Tile t) {
         tiles.add(t);
+    }
+
+    public boolean isEmpty() {
+        return tiles.isEmpty();
     }
 
     @Override

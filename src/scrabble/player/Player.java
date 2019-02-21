@@ -28,6 +28,10 @@ public abstract class Player {
         hand = null;
     }
 
+    public boolean isHandEmpty() {
+        return tray.isEmpty();
+    }
+
     /**
      * Constructor used for gui
      * Initialize the hand hbox to the hand

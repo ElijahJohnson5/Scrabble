@@ -34,7 +34,7 @@ public class CPUPlayer extends Player {
      */
     public CPUPlayer(TileManager manager) {
         super(manager);
-        tray.setTiles(manager.drawTray());
+        tray.setTiles(manager.drawTray(7));
         System.out.println(tray);
         legalMoves = new HashSet<>();
         currentMove = new ArrayList<>();
@@ -46,7 +46,7 @@ public class CPUPlayer extends Player {
 
     public CPUPlayer(TileManager manager, HBox hand) {
         super(manager, hand);
-        tray.setTiles(manager.drawTray());
+        tray.setTiles(manager.drawTray(7));
         System.out.println(tray);
         legalMoves = new HashSet<>();
         currentMove = new ArrayList<>();
@@ -88,9 +88,12 @@ public class CPUPlayer extends Player {
         board.transpose();
         //No possible moves trade out hand
         if (legalMoves.size() == 0) {
-            tray.setTiles(manager.redrawTray(tray.getTiles()));
+            tray.setTiles(manager.redrawTray(tray.getTiles(), 7));
             return 0;
         }
+
+
+
         //Debug printing
         System.out.println(highestMove);
         //Play the highestScoringWord
@@ -102,18 +105,22 @@ public class CPUPlayer extends Player {
             hand.getChildren().clear();
         }
         //Redraw up to seven tiles if possible
-        tray.redrawToSeven(manager);
+        if (!manager.isEmpty()) {
+            tray.redrawToSeven(manager);
+        }
         if (hand != null) {
             hand.getChildren().addAll(tray.getTileDisplay());
         }
+
         //Debug printing
         System.out.println(tray);
         System.out.println(legalMoves);
-        System.out.println(highestScoring);
         System.out.println(highestScoringWord);
+        System.out.println(highestScoring);
         System.out.println(highestAnchorPos);
         System.out.println(highestStartPos);
         System.out.println(highestEndPos);
+
         return 0;
     }
 
@@ -338,20 +345,21 @@ public class CPUPlayer extends Player {
             }
         }
         //We dont have a highest word yet, make this word highest
-        if (highestAnchorPos == null && highestScoringWord == null) {
+        if (highestScoring == 0) {
             highestMove.clear();
             highestScoringWord = word;
             highestMove.addAll(currentMove);
             //Get all of the relavent posistions, based on if
             //the board is transposed or not
-            getPositions(anchorPos, board);
+
             //Check if the end position makes sense for this word
-            if (highestEndPos.getCol() !=
-                    highestStartPos.getCol() + word.length() - 1) {
-                //If it doesnt update the end position based on the word
-                highestEndPos = new Position(highestStartPos.getRow(),
-                        highestStartPos.getCol() + word.length() - 1);
+            if (currentEndPos.getCol() !=
+                    currentStartPos.getCol() + word.length() - 1) {
+                currentEndPos = new Position(currentEndPos.getRow(),
+                        currentStartPos.getCol() + word.length() - 1);
             }
+
+            getPositions(anchorPos, board);
             //Get the value of this word if we played it
             highestScoring = board.getValue(word, currentMove, currentStartPos) + (leftOfAnchor == null ? 0 : manager.getValue(leftOfAnchor));
         }
@@ -375,7 +383,11 @@ public class CPUPlayer extends Player {
             }
         }
         //Keep a set of all legal moves
-        legalMoves.add(word);
+        if (leftOfAnchor != null) {
+            legalMoves.add(leftOfAnchor + word);
+        } else {
+            legalMoves.add(word);
+        }
     }
 
     /**

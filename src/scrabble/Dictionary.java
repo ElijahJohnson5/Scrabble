@@ -1,5 +1,6 @@
 package scrabble;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,7 +27,7 @@ public abstract class Dictionary {
 
     abstract public boolean search(String word);
 
-    abstract public void insert(File dict);
+    abstract public void insert(BufferedReader br);
 
     private void getStrings(Set<String> strings, Condition condition, String prefixString, String conditionString, Map<Character, DictNode> transitionMap) {
         for (Map.Entry<Character, DictNode> entry : transitionMap.entrySet()) {

@@ -7,8 +7,6 @@
 package scrabble;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
@@ -29,14 +27,12 @@ public class TileManager {
     /**
      * Initialize the tile manager based
      * on a file containing the letter distribution to be used
-     * @param letterDist the file that contains the letter
+     * @param br the file that contains the letter
      *                   distribution to be used
      * @return true if it initializes correctly otherwise false
      */
-    public boolean initialize(File letterDist) {
+    public boolean initialize(BufferedReader br) {
         try {
-            //Create buffered reader
-            BufferedReader br = new BufferedReader(new FileReader(letterDist));
             String line;
             //Read line by line
             //First char represents value
@@ -67,7 +63,6 @@ public class TileManager {
                 bag.add(new Tile(entry.getKey(), valueMap.get(entry.getKey())));
             }
         }
-        System.out.println("Bag size: " + bag.size());
         return true;
     }
 

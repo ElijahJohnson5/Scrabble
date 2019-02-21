@@ -9,12 +9,13 @@ import javafx.stage.Stage;
 import scrabble.player.CPUPlayer;
 import scrabble.player.Player;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class ScrabbleGui extends Application {
     private Player currentPlayer;
-    public final static boolean DEBUG_PRINT = true;
+    public final static boolean DEBUG_PRINT = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -40,12 +41,12 @@ public class ScrabbleGui extends Application {
         primaryStage.setScene(scene);
 
         Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.DAWG);
-        dict.insert(new File(getClass().getResource("../dict.txt").getPath()));
+        dict.insert(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/dict.txt"))));
         TileManager tileManager = new TileManager();
         Board board = new Board(controller.getBoard());
 
-        tileManager.initialize(new File(getClass().getResource("../default_letter_distributions.txt").getPath()));
-        board.initialize(new File(getClass().getResource("../default_board.txt").getPath()), tileManager);
+        tileManager.initialize(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/default_letter_distributions.txt"))));
+        board.initialize(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/default_board.txt"))), tileManager);
         CPUPlayer cpuPlayer = new CPUPlayer(tileManager, controller.getComputerHand());
         currentPlayer = cpuPlayer;
         CPUPlayer cpuPlayer2 = new CPUPlayer(tileManager, controller.getPlayerHand());

@@ -7,7 +7,6 @@
 
 package scrabble;
 
-import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -51,6 +50,7 @@ public class Board {
     public Board(VBox board) {
         this();
         this.board = board;
+        isTransposed = false;
         //Tell it to do the rest of the gui stuff
         initGui = true;
     }
@@ -203,7 +203,7 @@ public class Board {
                         break;
                     }
                 }
-                if (j < tiles.size()) {
+                if (j < tiles.size() && toPlay != null) {
                     tiles.remove(j);
                 }
                 if (toPlay == null) {
@@ -603,7 +603,7 @@ public class Board {
      */
     public void transpose() {
         for (int i = 0; i < size; i++) {
-            for (int j = i + 1; j < size; j++) {
+            for (int j = 0; j < i; j++) {
                 BoardSquare temp = tiles[i][j];
                 tiles[i][j] = tiles[j][i];
                 tiles[j][i] = temp;

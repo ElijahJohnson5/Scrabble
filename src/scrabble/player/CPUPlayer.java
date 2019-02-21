@@ -92,10 +92,6 @@ public class CPUPlayer extends Player {
             return 0;
         }
 
-
-
-        //Debug printing
-        System.out.println(highestMove);
         //Play the highestScoringWord
         List<Tile> moves = new ArrayList<>(highestMove);
         board.playWord(highestScoringWord, highestMove, highestStartPos, highestEndPos);
@@ -113,13 +109,17 @@ public class CPUPlayer extends Player {
         }
 
         //Debug printing
-        System.out.println(tray);
-        System.out.println(legalMoves);
-        System.out.println(highestScoringWord);
-        System.out.println(highestScoring);
-        System.out.println(highestAnchorPos);
-        System.out.println(highestStartPos);
-        System.out.println(highestEndPos);
+        if (ScrabbleGui.DEBUG_PRINT) {
+            System.out.println(tray);
+            System.out.println(legalMoves);
+            System.out.println(highestScoringWord);
+            System.out.println(highestScoring);
+            System.out.println(highestAnchorPos);
+            System.out.println(highestStartPos);
+            System.out.println(highestEndPos);
+            //Debug printing
+            System.out.println(highestMove);
+        }
 
         return 0;
     }
@@ -137,7 +137,9 @@ public class CPUPlayer extends Player {
         if (crossChecks == null) {
             crossChecks = new HashMap<>();
         }
-        System.out.println(crossChecks);
+        if (ScrabbleGui.DEBUG_PRINT) {
+            System.out.println(crossChecks);
+        }
         //Get all of the potential anchor squares
         Set<Position> anchors = board.getPotentialAnchorSquares();
         int count;

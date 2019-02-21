@@ -14,6 +14,7 @@ import java.io.IOException;
 
 public class ScrabbleGui extends Application {
     private Player currentPlayer;
+    public final static boolean DEBUG_PRINT = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,7 +39,7 @@ public class ScrabbleGui extends Application {
         primaryStage.setTitle("Scrabble");
         primaryStage.setScene(scene);
 
-        Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.TRIE);
+        Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.DAWG);
         dict.insert(new File("./resources/dict.txt"));
         TileManager tileManager = new TileManager();
         Board board = new Board(controller.getBoard());
@@ -51,12 +52,20 @@ public class ScrabbleGui extends Application {
         primaryStage.show();
 
         AnimationTimer timer = new AnimationTimer() {
+            private Long start = null;
+
             @Override
             public void handle(long now) {
+                if (start == null) {
+                    start = now;
+                }
+
                 if (currentPlayer.takeTurn(board, dict) == 0) {
                     if (currentPlayer.isHandEmpty()) {
                         //end game
                         this.stop();
+                        long end = System.nanoTime();
+                        System.out.println("Game took " + (end - start) / 1000000 + "ms");
                     } else {
                         currentPlayer = (currentPlayer == cpuPlayer) ? cpuPlayer2 : cpuPlayer;
                     }

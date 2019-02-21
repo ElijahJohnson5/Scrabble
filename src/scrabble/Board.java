@@ -253,7 +253,9 @@ public class Board {
             }
         }
         isEmpty = false;
-        System.out.println(this);
+        if (ScrabbleGui.DEBUG_PRINT) {
+            System.out.println(this);
+        }
         //Played successfully
         return true;
     }
@@ -402,7 +404,9 @@ public class Board {
             }
         }
 
-        System.out.println(this.crossSum);
+        if (ScrabbleGui.DEBUG_PRINT) {
+            System.out.println(this.crossSum);
+        }
         //Return the map
         return crossCheckMap;
     }

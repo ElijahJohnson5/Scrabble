@@ -120,7 +120,7 @@ public class Board {
                 if (Character.isUpperCase(s.charAt(0))) {
                     score = 0;
                 } else {
-                    score = tileManager.getTileValue(s.charAt(0));
+                    score = tileManager.getTileValue(Character.toUpperCase(s.charAt(0)));
                 }
                 s = s.toUpperCase();
                 //Occupied by tile

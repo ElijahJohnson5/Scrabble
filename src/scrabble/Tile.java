@@ -120,6 +120,14 @@ public class Tile {
      */
     @Override
     public String toString() {
-        return " " + character + " ";
+        StringBuilder sb = new StringBuilder();
+        sb.append(" ");
+        if (score == 0) {
+            sb.append(character);
+        } else {
+            sb.append(Character.toLowerCase(character));
+        }
+        sb.append(" ");
+        return sb.toString();
     }
 }

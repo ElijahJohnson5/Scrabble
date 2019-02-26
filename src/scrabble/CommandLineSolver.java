@@ -20,7 +20,7 @@ public class CommandLineSolver {
     private TileManager manager;
 
     public CommandLineSolver(BufferedReader br) {
-        dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.TRIE);
+        dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.DAWG);
         dict.insert(br);
         board = new Board();
         cpuPlayer = null;

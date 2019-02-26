@@ -54,6 +54,14 @@ public class Position {
         return new Position(this.col, this.row);
     }
 
+    public void incrementCol() {
+        this.col++;
+    }
+
+    public void incrementRow() {
+        this.row++;
+    }
+
     /**
      * String representation of the position
      * @return the string containing the row and col

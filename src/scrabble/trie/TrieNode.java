@@ -23,13 +23,12 @@ public class TrieNode extends DictNode {
             temp = temp.transition(trans.charAt(i));
             if (temp == null) break;
         }
-
         return temp;
     }
 
     @Override
     public int hashCode() {
-        return Integer.toString(nodeId).hashCode();
+        return nodeId;
     }
 
     @Override

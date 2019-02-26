@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.control.Label?>
 <HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="scrabble.ScrabbleDisplay"
-    prefHeight="800.0" prefWidth="950.0">
+      prefHeight="800.0" prefWidth="950.0">
     <VBox prefHeight="800" prefWidth="750">
         <HBox fx:id="computerHand" prefHeight="50" prefWidth="750" alignment="CENTER" spacing="5"/>
         <VBox fx:id="board" prefHeight="700"/>
         <HBox fx:id="playerHand" prefHeight="50" prefWidth="750" alignment="CENTER" spacing="5"/>
     </VBox>
-    <VBox prefHeight="800" prefWidth="200">
-
+    <VBox prefHeight="800" prefWidth="200" alignment="CENTER">
+        <Label fx:id="computerScore" text="0"/>
+        <Label fx:id="playerScore" text="0"/>
     </VBox>
 </HBox>

@@ -198,6 +198,10 @@ public class Board {
         return tiles[row][col].getTile();
     }
 
+    public Tile getTile(Position pos) {
+        return tiles[pos.getRow()][pos.getCol()].getTile();
+    }
+
     /**
      * Play a word on the board
      * @param word the string representing the word to be played
@@ -252,24 +256,20 @@ public class Board {
 
                 //If it is across play
                 if (across) {
-                    //If it is across increment the col of current
-                    current = new Position(current.getRow(),
-                            current.getCol() + 1);
+                    //Advance current
+                    current.incrementCol();
                 } else {
-                    //If it is down increment the row of current
-                    current = new Position(current.getRow() + 1,
-                            current.getCol());
+                    //Advance current
+                    current.incrementRow();
                 }
             } else {
                 if (across) {
                     //Advance current
-                    current = new Position(current.getRow(),
-                            current.getCol() + 1);
+                    current.incrementCol();
                 }
                 else {
                     //Advance current
-                    current = new Position(current.getRow() + 1,
-                            current.getCol());
+                    current.incrementRow();
                 }
             }
         }

@@ -370,7 +370,8 @@ public class CPUPlayer extends Player {
 
             getPositions(anchorPos, board);
             //Get the value of this word if we played it
-            highestScoring = board.getValue(word, currentMove, currentStartPos) + (leftOfAnchor == null ? 0 : manager.getValue(leftOfAnchor));
+            highestScoring = board.getValue(word, currentMove, currentStartPos)
+                    + (leftOfAnchor == null ? 0 : manager.getValue(leftOfAnchor));
         }
         else {
             //Check if end pos makes sense
@@ -380,7 +381,8 @@ public class CPUPlayer extends Player {
                         currentStartPos.getCol() + word.length() - 1);
             }
             //Get the score for this move minus any blanks
-            int score = board.getValue(word, currentMove, currentStartPos) + (leftOfAnchor == null ? 0 : manager.getValue(leftOfAnchor));
+            int score = board.getValue(word, currentMove, currentStartPos)
+                    + (leftOfAnchor == null ? 0 : manager.getValue(leftOfAnchor));
             //If the score is greater than our highest this is our new highest
             if (score > highestScoring) {
                 //Update highest values

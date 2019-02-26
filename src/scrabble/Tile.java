@@ -111,7 +111,7 @@ public class Tile {
      * @return true if the character is '*' otherwise false
      */
     public boolean isBlank() {
-        return (character == '*');
+        return (character == '*' || score == 0);
     }
 
     /**

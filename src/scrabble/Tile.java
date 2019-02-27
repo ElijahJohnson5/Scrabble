@@ -6,6 +6,7 @@
 
 package scrabble;
 
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -76,6 +77,42 @@ public class Tile {
         text.setFont(new Font(25));
         text.setTextAlignment(TextAlignment.CENTER);
         tile.getChildren().set(1, text);
+    }
+
+
+    public void setDragAndDrop(HBox hand) {
+        if (tile == null) {
+            createDisplay();
+        }
+        tile.setOnDragDetected(mouseEvent -> {
+            tile.startFullDrag();
+            mouseEvent.consume();
+        });
+
+        tile.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.isSecondaryButtonDown()) {
+                hand.getChildren().add(tile);
+                tile.setTranslateX(0);
+                tile.setTranslateY(0);
+            }
+        });
+
+        tile.setOnMouseDragged(mouseEvent -> {
+            tile.setTranslateX(mouseEvent.getX() + tile.getTranslateX() - 25);
+            tile.setTranslateY(mouseEvent.getY() + tile.getTranslateY() - 25);
+            mouseEvent.consume();
+        });
+
+        tile.setOnMouseDragReleased(mouseDragEvent -> {
+            Position pos = new Position((int)Math.round((mouseDragEvent.getSceneY() - 50) / 50), (int)Math.round((mouseDragEvent.getSceneX() - 25) / 50));
+            DropEvent drop = new DropEvent(pos, this);
+            tile.getParent().getParent().getChildrenUnmodifiable().get(1).fireEvent(drop);
+            tile.setTranslateY(0);
+            tile.setTranslateX(0);
+            hand.getChildren().remove(tile);
+            mouseDragEvent.consume();
+        });
+
     }
 
     /**

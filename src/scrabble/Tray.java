@@ -6,6 +6,7 @@
 
 package scrabble;
 
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
@@ -122,6 +123,12 @@ public class Tray {
      */
     public void addToTray(Tile t) {
         tiles.add(t);
+    }
+
+    public void setDragAndDrop(HBox hand) {
+        for (Tile t : tiles) {
+            t.setDragAndDrop(hand);
+        }
     }
 
     public boolean isEmpty() {

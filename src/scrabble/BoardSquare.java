@@ -18,7 +18,7 @@ public class BoardSquare {
 
     //GUI
     private Pane pane;
-
+    private Pane oldPane;
     /**
      * Default square not tile
      * and multipliers set to one
@@ -123,6 +123,21 @@ public class BoardSquare {
             this.pane = t.getDisplay();
         }
     }
+
+    public void placeTile(Tile t) {
+        this.tile = t;
+        if (pane != null) {
+            this.oldPane = pane;
+            this.pane = t.getDisplay();
+        }
+    }
+
+    public void unPlaceTile() {
+        this.tile = null;
+        pane = oldPane;
+        oldPane = null;
+    }
+
 
     /**
      * Gets the word multiplier of

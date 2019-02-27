@@ -24,6 +24,7 @@ public class Board {
     private TileManager tileManager;
     private Map<Position, Integer> crossSum;
     private Set<Position> potentialAnchors;
+    private Map<Tile, Position> overriden;
 
     //GUI
     private boolean initGui;
@@ -53,6 +54,7 @@ public class Board {
         isTransposed = false;
         //Tell it to do the rest of the gui stuff
         initGui = true;
+        overriden = new HashMap<>();
     }
 
     /**
@@ -159,6 +161,24 @@ public class Board {
         }
         //Add them all to the board
         board.getChildren().addAll(rows);
+        board.addEventHandler(DropEvent.DROP_EVENT, dropEvent -> {
+            Position pos = dropEvent.getPos();
+            System.out.println(pos);
+
+            if (overriden.containsKey(dropEvent.getTile())) {
+                Position oldPos = overriden.get(dropEvent.getTile());
+                tiles[oldPos.getRow()][oldPos.getCol()].unPlaceTile();
+                HBox row = (HBox) board.getChildren().get(oldPos.getRow());
+                row.getChildren().set(oldPos.getCol(), tiles[oldPos.getRow()][oldPos.getCol()].getDisplay());
+            }
+
+            if (isEmpty(pos.getRow(), pos.getCol())) {
+                overriden.put(dropEvent.getTile(), pos);
+                tiles[pos.getRow()][pos.getCol()].placeTile(dropEvent.getTile());
+                HBox row = (HBox) board.getChildren().get(pos.getRow());
+                row.getChildren().set(pos.getCol(), tiles[pos.getRow()][pos.getCol()].getDisplay());
+            }
+        });
     }
 
     /**

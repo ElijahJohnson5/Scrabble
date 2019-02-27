@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import scrabble.player.CPUPlayer;
 import scrabble.player.Player;
+import scrabble.player.UserPlayer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.io.InputStreamReader;
 public class ScrabbleGui extends Application {
     private Player currentPlayer;
     public final static boolean DEBUG_PRINT = false;
+    private final static String LETTER_DIS = "/default_letter_distributions.txt";
+    private final static String DEFAULT_BOARD = "/default_board.txt";
 
     public static void main(String[] args) {
         launch(args);
@@ -41,15 +44,22 @@ public class ScrabbleGui extends Application {
         primaryStage.setScene(scene);
 
         Dictionary dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.DAWG);
-        dict.insert(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/sowpods.txt"))));
+        dict.insert(new BufferedReader(
+                new InputStreamReader(
+                        getClass().getResourceAsStream("/sowpods.txt"))));
         TileManager tileManager = new TileManager();
         Board board = new Board(controller.getBoard());
 
-        tileManager.initialize(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/default_letter_distributions.txt"))));
-        board.initialize(new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/default_board.txt"))), tileManager);
-        CPUPlayer cpuPlayer = new CPUPlayer(tileManager, controller.getComputerHand());
-        currentPlayer = cpuPlayer;
-        CPUPlayer cpuPlayer2 = new CPUPlayer(tileManager, controller.getPlayerHand());
+        tileManager.initialize(new BufferedReader(
+                new InputStreamReader(
+                        getClass().getResourceAsStream(LETTER_DIS))));
+        board.initialize(new BufferedReader(
+                new InputStreamReader(
+                        getClass().getResourceAsStream(DEFAULT_BOARD))),
+                tileManager);
+        UserPlayer userPlayer = new UserPlayer(tileManager, controller.getPlayerHand());
+        currentPlayer = userPlayer;
+        CPUPlayer cpuPlayer2 = new CPUPlayer(tileManager, controller.getComputerHand());
         primaryStage.show();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -60,7 +70,6 @@ public class ScrabbleGui extends Application {
                 if (start == null) {
                     start = now;
                 }
-
                 if (currentPlayer.takeTurn(board, dict) == 0) {
                     if (currentPlayer.isHandEmpty()) {
                         //end game
@@ -68,7 +77,7 @@ public class ScrabbleGui extends Application {
                         long end = System.nanoTime();
                         System.out.println("Game took " + (end - start) / 1000000 + "ms");
                     } else {
-                        currentPlayer = (currentPlayer == cpuPlayer) ? cpuPlayer2 : cpuPlayer;
+                        currentPlayer = (currentPlayer == userPlayer) ? cpuPlayer2 : userPlayer;
                     }
                 }
             }

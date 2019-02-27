@@ -7,7 +7,9 @@
 
 package scrabble;
 
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.io.BufferedReader;
@@ -28,7 +30,7 @@ public class Board {
 
     //GUI
     private boolean initGui;
-    private VBox board;
+    private GridPane board;
 
     /**
      * Default values
@@ -48,7 +50,7 @@ public class Board {
      * @param board the vbox representing the board
      *              on the display
      */
-    public Board(VBox board) {
+    public Board(GridPane board) {
         this();
         this.board = board;
         isTransposed = false;
@@ -150,17 +152,16 @@ public class Board {
      * Initialize the display of the board for the gui
      */
     private void initializeDisplay() {
-        List<HBox> rows = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            HBox row = new HBox();
             for (int j = 0; j < size; j++) {
                 //Get displays for each BoardSquare
-                row.getChildren().add(tiles[i][j].getDisplay());
+                Pane p = tiles[i][j].getDisplay();
+                GridPane.setRowIndex(p, i);
+                GridPane.setColumnIndex(p, j);
+                board.getChildren().add(p);
             }
-            rows.add(row);
         }
         //Add them all to the board
-        board.getChildren().addAll(rows);
         board.addEventHandler(DropEvent.DROP_EVENT, dropEvent -> {
             Position pos = dropEvent.getPos();
             System.out.println(pos);
@@ -168,15 +169,14 @@ public class Board {
             if (overriden.containsKey(dropEvent.getTile())) {
                 Position oldPos = overriden.get(dropEvent.getTile());
                 tiles[oldPos.getRow()][oldPos.getCol()].unPlaceTile();
-                HBox row = (HBox) board.getChildren().get(oldPos.getRow());
-                row.getChildren().set(oldPos.getCol(), tiles[oldPos.getRow()][oldPos.getCol()].getDisplay());
             }
 
             if (isEmpty(pos.getRow(), pos.getCol())) {
                 overriden.put(dropEvent.getTile(), pos);
                 tiles[pos.getRow()][pos.getCol()].placeTile(dropEvent.getTile());
-                HBox row = (HBox) board.getChildren().get(pos.getRow());
-                row.getChildren().set(pos.getCol(), tiles[pos.getRow()][pos.getCol()].getDisplay());
+                Pane p = this.tiles[pos.getRow()][pos.getCol()].getDisplay();
+                GridPane.setColumnIndex(p, pos.getCol());
+                GridPane.setRowIndex(p, pos.getRow());
             }
         });
     }
@@ -270,8 +270,10 @@ public class Board {
                 //Play tile
                 this.tiles[current.getRow()][current.getCol()].playTile(toPlay);
                 if (initGui) {
-                    HBox row = (HBox)board.getChildren().get(current.getRow());
-                    row.getChildren().set(current.getCol(), this.tiles[current.getRow()][current.getCol()].getDisplay());
+                    Pane p = this.tiles[current.getRow()][current.getCol()].getDisplay();
+                    GridPane.setColumnIndex(p, current.getCol());
+                    GridPane.setRowIndex(p, current.getRow());
+                    board.getChildren().add(p);
                 }
 
                 //If it is across play

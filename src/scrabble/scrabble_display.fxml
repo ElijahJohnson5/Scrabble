@@ -6,7 +6,14 @@
       prefHeight="800.0" prefWidth="950.0">
     <VBox prefHeight="800" prefWidth="750">
         <HBox fx:id="computerHand" prefHeight="50" prefWidth="750" alignment="CENTER" spacing="5"/>
-        <VBox fx:id="board" prefHeight="700"/>
+        <GridPane fx:id="board" prefHeight="700">
+            <columnConstraints>
+                <ColumnConstraints hgrow="NEVER" minWidth="50" maxWidth="50"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="NEVER" minHeight="50" maxHeight="50"/>
+            </rowConstraints>
+        </GridPane>
         <HBox fx:id="playerHand" prefHeight="50" prefWidth="750" alignment="CENTER" spacing="5"/>
     </VBox>
     <VBox prefHeight="800" prefWidth="200" alignment="CENTER">

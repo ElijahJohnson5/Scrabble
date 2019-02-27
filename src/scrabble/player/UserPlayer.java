@@ -1,5 +1,6 @@
 package scrabble.player;
 
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import scrabble.Board;
 import scrabble.Dictionary;
@@ -14,7 +15,7 @@ public class UserPlayer extends Player {
     public UserPlayer(TileManager manager, HBox hand) {
         super(manager, hand);
         tray.setTiles(manager.drawTray(7));
-        tray.setDragAndDrop(hand);
+        tray.setDragAndDrop(hand, (GridPane)hand.getParent().getChildrenUnmodifiable().get(1));
         hand.getChildren().addAll(tray.getTileDisplay());
     }
 

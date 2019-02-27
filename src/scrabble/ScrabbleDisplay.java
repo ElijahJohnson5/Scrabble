@@ -9,14 +9,14 @@ import javafx.scene.paint.Color;
 public class ScrabbleDisplay {
 
     private @FXML HBox computerHand;
-    private @FXML VBox board;
+    private @FXML GridPane board;
     private @FXML HBox playerHand;
 
     public HBox getComputerHand() {
         return computerHand;
     }
 
-    public VBox getBoard() {
+    public GridPane getBoard() {
         return board;
     }
 

@@ -6,6 +6,7 @@
 
 package scrabble;
 
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -80,7 +81,7 @@ public class Tile {
     }
 
 
-    public void setDragAndDrop(HBox hand) {
+    public void setDragAndDrop(HBox hand, GridPane board) {
         if (tile == null) {
             createDisplay();
         }
@@ -106,10 +107,9 @@ public class Tile {
         tile.setOnMouseDragReleased(mouseDragEvent -> {
             Position pos = new Position((int)Math.round((mouseDragEvent.getSceneY() - 50) / 50), (int)Math.round((mouseDragEvent.getSceneX() - 25) / 50));
             DropEvent drop = new DropEvent(pos, this);
-            tile.getParent().getParent().getChildrenUnmodifiable().get(1).fireEvent(drop);
+            board.fireEvent(drop);
             tile.setTranslateY(0);
             tile.setTranslateX(0);
-            hand.getChildren().remove(tile);
             mouseDragEvent.consume();
         });
 

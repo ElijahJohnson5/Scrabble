@@ -6,6 +6,7 @@
 
 package scrabble;
 
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
@@ -125,9 +126,9 @@ public class Tray {
         tiles.add(t);
     }
 
-    public void setDragAndDrop(HBox hand) {
+    public void setDragAndDrop(HBox hand, GridPane board) {
         for (Tile t : tiles) {
-            t.setDragAndDrop(hand);
+            t.setDragAndDrop(hand, board);
         }
     }
 

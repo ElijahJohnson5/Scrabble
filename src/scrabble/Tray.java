@@ -130,7 +130,7 @@ public class Tray {
         tiles.add(t);
     }
 
-    public void setDragAndDrop(HBox hand, GridPane board, BiConsumer<Tile, Position> droppedCallback, BiConsumer<Tile, Position> returnedCallback) {
+    public void setDragAndDrop(HBox hand, GridPane board, BiConsumer<Tile, Position> droppedCallback, Consumer<Tile> returnedCallback) {
         dragAndDrop = true;
         for (Tile t : tiles) {
             t.setDragAndDrop(hand, board, droppedCallback, returnedCallback);

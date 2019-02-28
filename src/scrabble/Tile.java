@@ -84,7 +84,7 @@ public class Tile {
     }
 
 
-    public void setDragAndDrop(HBox hand, GridPane board, BiConsumer<Tile, Position> droppedCallBack, BiConsumer<Tile, Position> returnedCallback) {
+    public void setDragAndDrop(HBox hand, GridPane board, BiConsumer<Tile, Position> droppedCallBack, Consumer<Tile> returnedCallback) {
         if (tile == null) {
             createDisplay();
         }
@@ -104,7 +104,7 @@ public class Tile {
                 DropEvent drop = new DropEvent(pos, this);
                 board.fireEvent(drop);
                 hand.getChildren().add(tile);
-                returnedCallback.accept(this, pos);
+                returnedCallback.accept(this);
                 tile.setTranslateY(0);
                 tile.setTranslateX(0);
                 tile.setViewOrder(0);

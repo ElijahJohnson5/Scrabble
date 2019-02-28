@@ -34,7 +34,10 @@ public class UserPlayer extends Player {
     @Override
     public int takeTurn(Dictionary dict) {
         if (!tray.isDragAndDrop()) {
-            tray.setDragAndDrop(hand, (GridPane)hand.getParent().getChildrenUnmodifiable().get(1), this::dropCallback, this::returnedCallback);
+            tray.setDragAndDrop(hand,
+                    (GridPane)hand.getParent().getChildrenUnmodifiable().get(1),
+                    this::dropCallback,
+                    this::returnedCallback);
         }
 
         if (playMove) {
@@ -44,7 +47,10 @@ public class UserPlayer extends Player {
             tray.removeAll(moves);
             hand.getChildren().clear();
             tray.redrawToSeven(manager);
-            tray.setDragAndDrop(hand, (GridPane)hand.getParent().getChildrenUnmodifiable().get(1), this::dropCallback, this::returnedCallback);
+            tray.setDragAndDrop(hand,
+                    (GridPane)hand.getParent().getChildrenUnmodifiable().get(1),
+                    this::dropCallback,
+                    this::returnedCallback);
             hand.getChildren().addAll(tray.getTileDisplay());
             startPos = null;
             endPos = null;
@@ -247,7 +253,7 @@ public class UserPlayer extends Player {
     }
 
 
-    private void returnedCallback(Tile returned, Position pos) {
+    private void returnedCallback(Tile returned) {
         currentMove.remove(returned);
         if (ScrabbleGui.DEBUG_PRINT) {
             System.out.println(currentPositions);

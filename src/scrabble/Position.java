@@ -6,7 +6,12 @@
 
 package scrabble;
 
-public class Position {
+public class Position implements Comparable<Position> {
+
+    public enum Direction {
+        DOWN, ACROSS, BOTH
+    }
+
     private int row;
     private int col;
 
@@ -62,6 +67,25 @@ public class Position {
         this.row++;
     }
 
+    public void decrementCol() { this.col--; }
+
+    public void decrementRow() { this.row--; }
+
+    public int distance(Position other) {
+        return (Math.abs(other.col - this.col) + Math.abs(other.row - this.row));
+    }
+
+    public Direction getDirection(Position other) {
+        if (this.row - other.row != 0) {
+            return Direction.DOWN;
+        }
+        if (this.col - other.col != 0) {
+            return Direction.ACROSS;
+        }
+
+        return Direction.BOTH;
+    }
+
     /**
      * String representation of the position
      * @return the string containing the row and col
@@ -94,5 +118,10 @@ public class Position {
 
         Position other = (Position) obj;
         return (this.row == other.row && this.col == other.col);
+    }
+
+    @Override
+    public int compareTo(Position o) {
+        return (this.row * 50 + this.col) - (o.row * 50 + o.col);
     }
 }

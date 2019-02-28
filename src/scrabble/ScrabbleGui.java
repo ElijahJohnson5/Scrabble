@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 
 public class ScrabbleGui extends Application {
     private Player currentPlayer;
-    public final static boolean DEBUG_PRINT = false;
+    public final static boolean DEBUG_PRINT = true;
     private final static String LETTER_DIS = "/default_letter_distributions.txt";
     private final static String DEFAULT_BOARD = "/default_board.txt";
 
@@ -27,7 +27,7 @@ public class ScrabbleGui extends Application {
     @Override
     public void start(Stage primaryStage) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("scrabble_display.fxml"));
-        Parent root = null;
+        Parent root;
         try {
             root = loader.load();
         } catch (IOException e) {
@@ -57,9 +57,10 @@ public class ScrabbleGui extends Application {
                 new InputStreamReader(
                         getClass().getResourceAsStream(DEFAULT_BOARD))),
                 tileManager);
-        UserPlayer userPlayer = new UserPlayer(tileManager, controller.getPlayerHand());
+        UserPlayer userPlayer = new UserPlayer(tileManager, board, controller.getPlayerHand());
+        controller.setupForUserPlayer(userPlayer, dict);
         currentPlayer = userPlayer;
-        CPUPlayer cpuPlayer2 = new CPUPlayer(tileManager, controller.getComputerHand());
+        CPUPlayer cpuPlayer2 = new CPUPlayer(tileManager, board, controller.getComputerHand());
         primaryStage.show();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -70,7 +71,7 @@ public class ScrabbleGui extends Application {
                 if (start == null) {
                     start = now;
                 }
-                if (currentPlayer.takeTurn(board, dict) == 0) {
+                if (currentPlayer.takeTurn(dict) == 0) {
                     if (currentPlayer.isHandEmpty()) {
                         //end game
                         this.stop();

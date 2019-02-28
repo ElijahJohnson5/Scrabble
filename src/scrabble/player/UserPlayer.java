@@ -13,6 +13,8 @@ public class UserPlayer extends Player {
     private List<Position> otherPos;
     private boolean playMove;
     private String currentWord;
+    private String lastWord;
+    private int lastScore;
     private Position endPos;
     private Position startPos;
 
@@ -46,6 +48,7 @@ public class UserPlayer extends Player {
             hand.getChildren().addAll(tray.getTileDisplay());
             startPos = null;
             endPos = null;
+            lastWord = currentWord;
             currentWord = null;
             currentPositions.clear();
             currentMove.clear();
@@ -54,9 +57,21 @@ public class UserPlayer extends Player {
         return 1;
     }
 
+    @Override
+    public String getLastWordPlayed() {
+        return lastWord;
+    }
+
+    @Override
+    public int getLastWordPlayedScore() {
+        return lastScore;
+    }
+
     public void attemptPlayMove(Dictionary dict) {
-        if (legalMove(dict)) {
-            playMove = true;
+        if (currentPositions.size() > 0) {
+            if (legalMove(dict)) {
+                playMove = true;
+            }
         }
     }
 
@@ -127,6 +142,7 @@ public class UserPlayer extends Player {
                         return false;
                     }
                     sb.append(board.getTile(startPos.getRow(), i).getCharacter());
+                    lastScore = board.getValue(sb.toString(), new ArrayList<>(currentMove.keySet()), startPos);
                 }
                 break;
             case DOWN:
@@ -141,6 +157,7 @@ public class UserPlayer extends Player {
                     }
                     sb.append(board.getTile(startPos.getCol(), i).getCharacter());
                 }
+                lastScore = board.getValue(sb.toString(), new ArrayList<>(currentMove.keySet()), startPos.transposed());
                 board.transpose();
                 break;
         }
@@ -148,6 +165,7 @@ public class UserPlayer extends Player {
         if (!dict.search(currentWord)) {
             currentPositions.removeAll(otherPos);
             otherPos.clear();
+            lastScore = -1;
             return false;
         }
         if (ScrabbleGui.DEBUG_PRINT) {

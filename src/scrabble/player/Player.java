@@ -60,4 +60,8 @@ public abstract class Player {
      */
     abstract public int takeTurn(Dictionary dict);
 
+    abstract public String getLastWordPlayed();
+
+    abstract public int getLastWordPlayedScore();
+
 }

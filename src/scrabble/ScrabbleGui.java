@@ -75,9 +75,12 @@ public class ScrabbleGui extends Application {
                     if (currentPlayer.isHandEmpty()) {
                         //end game
                         this.stop();
-                        long end = System.nanoTime();
-                        System.out.println("Game took " + (end - start) / 1000000 + "ms");
+                        if (DEBUG_PRINT) {
+                            long end = System.nanoTime();
+                            System.out.println("Game took " + (end - start) / 1000000 + "ms");
+                        }
                     } else {
+                        controller.updateScore(currentPlayer.getLastWordPlayedScore(), currentPlayer);
                         currentPlayer = (currentPlayer == userPlayer) ? cpuPlayer2 : userPlayer;
                     }
                 }

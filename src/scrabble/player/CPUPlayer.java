@@ -63,7 +63,8 @@ public class CPUPlayer extends Player {
         highestScoring = 0;
     }
 
-    public String getWordPlayed() {
+    @Override
+    public String getLastWordPlayed() {
         if (highestScoringLeftOfAnchor != null) {
             return highestScoringLeftOfAnchor + highestScoringWord;
         } else {
@@ -71,7 +72,8 @@ public class CPUPlayer extends Player {
         }
     }
 
-    public int getWordScore() {
+    @Override
+    public int getLastWordPlayedScore() {
         return highestScoring;
     }
 
@@ -337,20 +339,16 @@ public class CPUPlayer extends Player {
             return;
         }
 
-        if (currentStartPos.getCol() + word.length() - 1 >= board.getSize()) {
-            return;
-        } else {
-            int i;
-            for (i = currentStartPos.getCol(); i <= currentEndPos.getCol(); i++) {
-                if (anchorPos.getCol() == i && anchorPos.getRow() == currentStartPos.getRow()) {
-                    break;
-                }
-            }
-
-            if (i > currentEndPos.getCol()) {
-                return;
+        int i;
+        for (i = currentStartPos.getCol(); i <= currentEndPos.getCol(); i++) {
+            if (anchorPos.getCol() == i && anchorPos.getRow() == currentStartPos.getRow()) {
+                break;
             }
         }
+        if (i > currentEndPos.getCol()) {
+            return;
+        }
+
         //We dont have a highest word yet, make this word highest
         if (highestScoring == 0) {
             highestMove.clear();

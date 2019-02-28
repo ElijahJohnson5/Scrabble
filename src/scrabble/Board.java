@@ -556,16 +556,22 @@ public class Board {
 
     private int prefixOrSuffixContainsBlank(Position currentPos) {
         int toSubtract = 0;
-        if (currentPos.getRow() > 0 && !tiles[currentPos.getRow() - 1][currentPos.getCol()].isEmpty()) {
-            if (tiles[currentPos.getRow() - 1][currentPos.getCol()].getTile().isBlank()) {
-                toSubtract += tileManager.getTileValue(tiles[currentPos.getRow() - 1][currentPos.getCol()].getTileCharacter());
+        Position current = new Position(currentPos);
+        current.decrementRow();
+        while (current.getRow() > 0 && !tiles[currentPos.getRow()][currentPos.getCol()].isEmpty()) {
+            if (tiles[currentPos.getRow()][currentPos.getCol()].getTile().isBlank()) {
+                toSubtract += tileManager.getTileValue(tiles[currentPos.getRow()][currentPos.getCol()].getTileCharacter());
             }
+            current.decrementRow();
         }
 
-        if (currentPos.getRow() < size - 1 && !tiles[currentPos.getRow() + 1][currentPos.getCol()].isEmpty()) {
-            if (tiles[currentPos.getRow() + 1][currentPos.getCol()].getTile().isBlank()) {
-                toSubtract += tileManager.getTileValue(tiles[currentPos.getRow() + 1][currentPos.getCol()].getTileCharacter());
+        current = new Position(currentPos);
+        current.incrementRow();
+        while (current.getRow() < size - 1 && !tiles[currentPos.getRow()][currentPos.getCol()].isEmpty()) {
+            if (tiles[currentPos.getRow()][currentPos.getCol()].getTile().isBlank()) {
+                toSubtract += tileManager.getTileValue(tiles[currentPos.getRow()][currentPos.getCol()].getTileCharacter());
             }
+            current.incrementRow();
         }
 
         return toSubtract;

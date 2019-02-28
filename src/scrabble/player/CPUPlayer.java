@@ -27,8 +27,8 @@ public class CPUPlayer extends Player {
     private Position highestEndPos;
     private String leftOfAnchor;
 
-    public CPUPlayer(TileManager manager, List<Tile> tray) {
-        super(manager, tray);
+    public CPUPlayer(TileManager manager, Board board, List<Tile> tray) {
+        super(manager, board, tray);
         legalMoves = new HashSet<>();
         currentMove = new ArrayList<>();
         highestMove = new ArrayList<>();
@@ -37,8 +37,8 @@ public class CPUPlayer extends Player {
         resetValues();
     }
 
-    public CPUPlayer(TileManager manager, HBox hand) {
-        super(manager, hand);
+    public CPUPlayer(TileManager manager, Board board, HBox hand) {
+        super(manager, board, hand);
         tray.setTiles(manager.drawTray(7));
         legalMoves = new HashSet<>();
         currentMove = new ArrayList<>();
@@ -78,12 +78,11 @@ public class CPUPlayer extends Player {
     /**
      * Takes the turn for the cpu, uses backtracking to generate
      * every possible move
-     * @param board the current board state
      * @param dict the dictionary to use for checking valid plays
      * @return
      */
     @Override
-    public int takeTurn(Board board, Dictionary dict) {
+    public int takeTurn(Dictionary dict) {
         resetValues();
         //Calculate all possible moves for the across plays
         calcMoves(board, dict);

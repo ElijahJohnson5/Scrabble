@@ -14,12 +14,13 @@ import java.util.List;
 public abstract class Player {
     protected TileManager manager;
     protected Tray tray;
+    protected Board board;
 
     //GUI
     protected HBox hand;
 
-    public Player(TileManager manager, List<Tile> tray) {
-        this(manager);
+    public Player(TileManager manager, Board board, List<Tile> tray) {
+        this(manager, board);
         this.tray.setTiles(tray);
     }
 
@@ -28,8 +29,9 @@ public abstract class Player {
      * Set the manager of each player
      * @param manager the tile manager for the tiles
      */
-    public Player(TileManager manager) {
+    public Player(TileManager manager, Board board) {
         this.manager = manager;
+        this.board = board;
         tray = new Tray();
         hand = null;
     }
@@ -45,18 +47,17 @@ public abstract class Player {
      * @param manager the tile manager for the tiles
      * @param hand the hbox representing the players hand in the gui
      */
-    public Player(TileManager manager, HBox hand) {
-        this(manager);
+    public Player(TileManager manager, Board board, HBox hand) {
+        this(manager, board);
         this.hand = hand;
     }
 
     /**
      * Takes a turn for the player, implemented
      * by child class
-     * @param board the current board state
      * @param dict the dictionary to use for checking valid plays
      * @return
      */
-    abstract public int takeTurn(Board board, Dictionary dict);
+    abstract public int takeTurn(Dictionary dict);
 
 }

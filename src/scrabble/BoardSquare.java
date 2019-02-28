@@ -15,6 +15,7 @@ public class BoardSquare {
     private int wordMultiplier;
     private int letterMultiplier;
     private Tile tile;
+    private boolean placed;
 
     //GUI
     private Pane pane;
@@ -28,6 +29,7 @@ public class BoardSquare {
         letterMultiplier = 1;
         tile = null;
         pane = null;
+        placed = false;
     }
 
     /**
@@ -78,6 +80,7 @@ public class BoardSquare {
         wordMultiplier = 1;
         letterMultiplier = 1;
         this.tile = tile;
+        placed = true;
     }
 
     /**
@@ -116,9 +119,14 @@ public class BoardSquare {
      * @param t the tile to play
      */
     public void playTile(Tile t) {
-        this.tile = t;
+        if (tile == null) {
+            this.tile = t;
+        } else {
+            this.tile.getDisplay(true);
+        }
         this.wordMultiplier = 1;
         this.letterMultiplier = 1;
+        placed = true;
         if (pane != null) {
             this.pane = t.getDisplay();
         }
@@ -173,7 +181,7 @@ public class BoardSquare {
      * otherwise false
      */
     public boolean isEmpty() {
-        return (tile == null);
+        return (tile == null || !placed);
     }
 
     /**

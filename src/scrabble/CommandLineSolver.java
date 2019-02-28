@@ -64,8 +64,8 @@ public class CommandLineSolver {
         for (int i = 0; i < lastLine.length(); i++) {
             tray.add(new Tile(lastLine.charAt(i), manager.getTileValue(lastLine.charAt(i))));
         }
-        cpuPlayer = new CPUPlayer(manager, tray);
-        cpuPlayer.takeTurn(board, dict);
+        cpuPlayer = new CPUPlayer(manager, board, tray);
+        cpuPlayer.takeTurn(dict);
         System.out.println(board);
         System.out.println("Word score: " + cpuPlayer.getWordScore());
         System.out.println("Word played: " + cpuPlayer.getWordPlayed());

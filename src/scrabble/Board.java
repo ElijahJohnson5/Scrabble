@@ -10,11 +10,8 @@ package scrabble;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
@@ -26,7 +23,7 @@ public class Board {
     private TileManager tileManager;
     private Map<Position, Integer> crossSum;
     private Set<Position> potentialAnchors;
-    private Map<Tile, Position> overriden;
+    private Map<Tile, Position> overridden;
 
     //GUI
     private boolean initGui;
@@ -56,7 +53,7 @@ public class Board {
         isTransposed = false;
         //Tell it to do the rest of the gui stuff
         initGui = true;
-        overriden = new HashMap<>();
+        overridden = new HashMap<>();
     }
 
     /**
@@ -162,23 +159,7 @@ public class Board {
             }
         }
         //Add them all to the board
-        board.addEventHandler(DropEvent.DROP_EVENT, dropEvent -> {
-            Position pos = dropEvent.getPos();
-            System.out.println(pos);
-
-            if (overriden.containsKey(dropEvent.getTile())) {
-                Position oldPos = overriden.get(dropEvent.getTile());
-                tiles[oldPos.getRow()][oldPos.getCol()].unPlaceTile();
-            }
-
-            if (isEmpty(pos.getRow(), pos.getCol())) {
-                overriden.put(dropEvent.getTile(), pos);
-                tiles[pos.getRow()][pos.getCol()].placeTile(dropEvent.getTile());
-                Pane p = this.tiles[pos.getRow()][pos.getCol()].getDisplay();
-                GridPane.setColumnIndex(p, pos.getCol());
-                GridPane.setRowIndex(p, pos.getRow());
-            }
-        });
+        board.addEventHandler(DropEvent.DROP_EVENT, this::dropHandler);
     }
 
     /**
@@ -273,7 +254,9 @@ public class Board {
                     Pane p = this.tiles[current.getRow()][current.getCol()].getDisplay();
                     GridPane.setColumnIndex(p, current.getCol());
                     GridPane.setRowIndex(p, current.getRow());
-                    board.getChildren().add(p);
+                    if (!board.getChildren().contains(p)) {
+                        board.getChildren().set(current.getRow() * size + current.getCol(), p);
+                    }
                 }
 
                 //If it is across play
@@ -424,7 +407,7 @@ public class Board {
         Map<Integer, Set<Character>> crossCheckMap = new HashMap<>();
         if (isEmpty) {
             //No cross checks can be generated
-            return null;
+            return crossCheckMap;
         }
         int crossSum;
         //Loop through the whole board
@@ -466,7 +449,7 @@ public class Board {
      */
     private int checkTiles(Dictionary dict, Map<Integer, Set<Character>> crossCheckMap, int row, int col) {
         //If there is a tile above and below
-        if (isBelow(row, col) && isAbove(row, col)) {
+        if (isBelow(row, col) && isAbove(row, col) && isEmpty(row, col)) {
             //Get prefix and suffix
             String prefix = buildPrefixString(row, col);
             String suffix = buildSuffixString(row, col);
@@ -483,11 +466,11 @@ public class Board {
             int prefixValue = tileManager.getValue(prefix);
             return prefixValue + tileManager.getValue(suffix);
         }
-        else if (isBelow(row, col)) {
+        else if (isBelow(row, col) && isEmpty(row, col)) {
             //Add to the cross check for the prefix
             return addToCrossCheck(crossCheckMap, row, col, dict, true);
         }
-        else if (isAbove(row, col)) {
+        else if (isAbove(row, col) && isEmpty(row, col)) {
             //Add to the cross check for the suffix
             return addToCrossCheck(crossCheckMap, row, col, dict, false);
         }
@@ -693,5 +676,35 @@ public class Board {
             }
         }
         return sb.toString();
+    }
+
+    private void dropHandler(DropEvent dropEvent) {
+        Position pos = dropEvent.getPos();
+        System.out.println(pos);
+
+        if (overridden.containsKey(dropEvent.getTile()) || dropEvent.getTile() == null) {
+            Position oldPos = (dropEvent.getTile() == null) ? dropEvent.getPos() : overridden.get(dropEvent.getTile());
+            tiles[oldPos.getRow()][oldPos.getCol()].unPlaceTile();
+            Pane p = this.tiles[oldPos.getRow()][oldPos.getCol()].getDisplay();
+            GridPane.setColumnIndex(p, oldPos.getCol());
+            GridPane.setRowIndex(p, oldPos.getRow());
+            board.getChildren().set(oldPos.getRow() * size + oldPos.getCol(), p);
+            if (!isEmpty(pos.getRow(), pos.getCol())) {
+                ((HBox) board.getParent().getChildrenUnmodifiable().get(2)).getChildren().add(dropEvent.getTile().getDisplay());
+            }
+            overridden.remove(dropEvent.getTile());
+            if (pos.equals(oldPos)) {
+                return;
+            }
+        }
+
+        if (pos.getRow() >= 0 && pos.getRow() < size && pos.getCol() >= 0 && pos.getCol() < size && isEmpty(pos.getRow(), pos.getCol()) && dropEvent.getTile() != null) {
+            overridden.put(dropEvent.getTile(), pos);
+            tiles[pos.getRow()][pos.getCol()].placeTile(dropEvent.getTile());
+            Pane p = this.tiles[pos.getRow()][pos.getCol()].getDisplay();
+            GridPane.setColumnIndex(p, pos.getCol());
+            GridPane.setRowIndex(p, pos.getRow());
+            board.getChildren().set(pos.getRow() * size + pos.getCol(), p);
+        }
     }
 }

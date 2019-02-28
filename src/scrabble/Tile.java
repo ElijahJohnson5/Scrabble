@@ -16,6 +16,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
 public class Tile {
     private char character;
     private int score;
@@ -81,35 +84,54 @@ public class Tile {
     }
 
 
-    public void setDragAndDrop(HBox hand, GridPane board) {
+    public void setDragAndDrop(HBox hand, GridPane board, BiConsumer<Tile, Position> droppedCallBack, BiConsumer<Tile, Position> returnedCallback) {
         if (tile == null) {
             createDisplay();
         }
         tile.setOnDragDetected(mouseEvent -> {
-            tile.startFullDrag();
+            if (mouseEvent.isPrimaryButtonDown()) {
+                tile.startFullDrag();
+                tile.setViewOrder(-2);
+            }
             mouseEvent.consume();
         });
 
-        tile.setOnMouseClicked(mouseEvent -> {
+        tile.setOnMousePressed(mouseEvent -> {
             if (mouseEvent.isSecondaryButtonDown()) {
+                double sceneY = mouseEvent.getSceneY() - 50;
+                double sceneX = mouseEvent.getSceneX() - 25;
+                Position pos = new Position((int)Math.floor(sceneY / 50), (int)Math.round(sceneX / 50));
+                DropEvent drop = new DropEvent(pos, this);
+                board.fireEvent(drop);
                 hand.getChildren().add(tile);
-                tile.setTranslateX(0);
+                returnedCallback.accept(this, pos);
                 tile.setTranslateY(0);
+                tile.setTranslateX(0);
+                tile.setViewOrder(0);
             }
+            mouseEvent.consume();
         });
 
         tile.setOnMouseDragged(mouseEvent -> {
-            tile.setTranslateX(mouseEvent.getX() + tile.getTranslateX() - 25);
-            tile.setTranslateY(mouseEvent.getY() + tile.getTranslateY() - 25);
+            if (mouseEvent.isPrimaryButtonDown()) {
+                tile.setTranslateX(mouseEvent.getX() + tile.getTranslateX() - 25);
+                tile.setTranslateY(mouseEvent.getY() + tile.getTranslateY() - 25);
+            }
             mouseEvent.consume();
         });
 
         tile.setOnMouseDragReleased(mouseDragEvent -> {
-            Position pos = new Position((int)Math.round((mouseDragEvent.getSceneY() - 50) / 50), (int)Math.round((mouseDragEvent.getSceneX() - 25) / 50));
+            double sceneY = mouseDragEvent.getSceneY() - 50;
+            double sceneX = mouseDragEvent.getSceneX() - 25;
+            Position pos = new Position((int)Math.floor(sceneY / 50), (int)Math.round(sceneX / 50));
             DropEvent drop = new DropEvent(pos, this);
             board.fireEvent(drop);
             tile.setTranslateY(0);
             tile.setTranslateX(0);
+            tile.setViewOrder(0);
+            if (!tile.getParent().equals(hand)) {
+                droppedCallBack.accept(this, pos);
+            }
             mouseDragEvent.consume();
         });
 
@@ -122,6 +144,13 @@ public class Tile {
      */
     public Pane getDisplay() {
         if (tile == null) {
+            createDisplay();
+        }
+        return tile;
+    }
+
+    public Pane getDisplay(boolean newDisplay) {
+        if (newDisplay) {
             createDisplay();
         }
         return tile;
@@ -166,5 +195,15 @@ public class Tile {
         }
         sb.append(" ");
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+
+        if (!(obj instanceof Tile)) return false;
+        Tile other = (Tile)obj;
+
+        return (this.tile == other.tile);
     }
 }

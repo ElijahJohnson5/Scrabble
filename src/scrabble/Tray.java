@@ -12,15 +12,19 @@ import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class Tray {
     private List<Tile> tiles;
+    private boolean dragAndDrop;
 
     /**
      * Initialize the tiles to a new array list
      */
     public Tray() {
         tiles = new ArrayList<>();
+        dragAndDrop = false;
     }
 
     /**
@@ -126,10 +130,15 @@ public class Tray {
         tiles.add(t);
     }
 
-    public void setDragAndDrop(HBox hand, GridPane board) {
+    public void setDragAndDrop(HBox hand, GridPane board, BiConsumer<Tile, Position> droppedCallback, BiConsumer<Tile, Position> returnedCallback) {
+        dragAndDrop = true;
         for (Tile t : tiles) {
-            t.setDragAndDrop(hand, board);
+            t.setDragAndDrop(hand, board, droppedCallback, returnedCallback);
         }
+    }
+
+    public boolean isDragAndDrop() {
+        return dragAndDrop;
     }
 
     public boolean isEmpty() {

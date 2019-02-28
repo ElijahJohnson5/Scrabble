@@ -337,7 +337,7 @@ public class CPUPlayer extends Player {
             return;
         }
 
-        if (currentStartPos.getCol() + word.length() >= board.getSize()) {
+        if (currentStartPos.getCol() + word.length() - 1 >= board.getSize()) {
             return;
         } else {
             int i;

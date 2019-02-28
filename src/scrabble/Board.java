@@ -522,6 +522,12 @@ public class Board {
                 //Add the score from pos
                 currentCrossSum = getScoreFromPos(current);
                 currentCrossSum -= prefixOrSuffixContainsBlank(current);
+                if (prefixOrSuffixContainsBlank(current) > 0) {
+                    System.out.println(prefixOrSuffixContainsBlank(current));
+                }
+                if (currentCrossSum != 0) {
+                    currentCrossSum += currentTile.getScore() * this.tiles[current.getRow()][current.getCol()].getLetterMultiplier();
+                }
                 //Get the word multiplier
                 wordMultiplier *= this.tiles[current.getRow()][current.getCol()].getWordMultiplier();
                 //Get the letter score multiplied by letter multiplier

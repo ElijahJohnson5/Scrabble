@@ -204,6 +204,6 @@ public class Tile {
         if (!(obj instanceof Tile)) return false;
         Tile other = (Tile)obj;
 
-        return (this.tile == other.tile);
+        return (this.tile == other.tile && this.character == other.character && this.score == other.score);
     }
 }

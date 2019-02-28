@@ -171,14 +171,6 @@ public class Board {
     }
 
     /**
-     * Check if the board is empty
-     * @return if isEmpty is true
-     */
-    public boolean isEmpty() {
-        return isEmpty;
-    }
-
-    /**
      * Check if a board square at the row
      * row and col col is empty
      * @param row the row of the board
@@ -258,7 +250,6 @@ public class Board {
                         board.getChildren().set(current.getRow() * size + current.getCol(), p);
                     }
                 }
-
                 //If it is across play
                 if (across) {
                     //Advance current
@@ -281,6 +272,10 @@ public class Board {
         isEmpty = false;
         if (ScrabbleGui.DEBUG_PRINT) {
             System.out.println(this);
+        }
+
+        if (initGui) {
+            overridden.clear();
         }
         //Played successfully
         return true;
@@ -371,17 +366,40 @@ public class Board {
         //Build prefix or suffix based on if prefix is true
         String string = (prefix ? buildPrefixString(row, col)
                 : buildSuffixString(row, col));
+        StringBuilder actual = new StringBuilder();
+        if (string.contains("*")) {
+            if (prefix) {
+                for (int i = 0; i < string.length(); i++) {
+                    if (string.charAt(i) == '*') {
+                        actual.append(tiles[row - (i + 1)][col].getTileCharacter());
+                    } else {
+                        actual.append(string.charAt(i));
+                    }
+                }
+            } else {
+                for (int i = 0; i < string.length(); i++) {
+                    if (string.charAt(i) == '*') {
+                        actual.append(tiles[row + (i + 1)][col].getTileCharacter());
+                    } else {
+                        actual.append(string.charAt(i));
+                    }
+                }
+            }
+        } else {
+            actual = new StringBuilder(string);
+        }
+
         Set<Character> c = new HashSet<>();
         //Check all the letters in the alphabet
         for (char alphabet = 'A'; alphabet <= 'Z'; alphabet++) {
             //if the string + alphabet or alphabet + string is
             //in the dict add it to the set of valid letters
             if (prefix) {
-                if (dict.search(string + alphabet)) {
+                if (dict.search(actual.toString() + alphabet)) {
                     c.add(alphabet);
                 }
             } else {
-                if (dict.search(alphabet + string)) {
+                if (dict.search(alphabet + actual.toString())) {
                     c.add(alphabet);
                 }
             }
@@ -420,13 +438,6 @@ public class Board {
                     //Add the cross sum for this position to the cross sum map
                     this.crossSum.put(new Position(i, j), crossSum);
                 }
-                /*else if (!tiles[i][j].isEmpty()) {
-                    //Calculate cross sums for non empty tiles
-                    String prefix = buildPrefixString(i, j);
-                    String suffix = buildSuffixString(i, j);
-                    crossSum = tileManager.getValue(prefix + tiles[i][j].getTile().getCharacter() + suffix);
-                    this.crossSum.put(new Position(i, j), crossSum);
-                }*/
             }
         }
 
@@ -521,10 +532,6 @@ public class Board {
                 }
                 //Add the score from pos
                 currentCrossSum = getScoreFromPos(current);
-                currentCrossSum -= prefixOrSuffixContainsBlank(current);
-                if (prefixOrSuffixContainsBlank(current) > 0) {
-                    System.out.println(prefixOrSuffixContainsBlank(current));
-                }
                 if (currentCrossSum != 0) {
                     currentCrossSum += currentTile.getScore() * this.tiles[current.getRow()][current.getCol()].getLetterMultiplier();
                 }
@@ -554,29 +561,6 @@ public class Board {
         return sum;
     }
 
-    private int prefixOrSuffixContainsBlank(Position currentPos) {
-        int toSubtract = 0;
-        Position current = new Position(currentPos);
-        current.decrementRow();
-        while (current.getRow() > 0 && !tiles[currentPos.getRow()][currentPos.getCol()].isEmpty()) {
-            if (tiles[currentPos.getRow()][currentPos.getCol()].getTile().isBlank()) {
-                toSubtract += tileManager.getTileValue(tiles[currentPos.getRow()][currentPos.getCol()].getTileCharacter());
-            }
-            current.decrementRow();
-        }
-
-        current = new Position(currentPos);
-        current.incrementRow();
-        while (current.getRow() < size - 1 && !tiles[currentPos.getRow()][currentPos.getCol()].isEmpty()) {
-            if (tiles[currentPos.getRow()][currentPos.getCol()].getTile().isBlank()) {
-                toSubtract += tileManager.getTileValue(tiles[currentPos.getRow()][currentPos.getCol()].getTileCharacter());
-            }
-            current.incrementRow();
-        }
-
-        return toSubtract;
-    }
-
     /**
      * Builds a string representing the prefix of a word
      * @param startingRow the row to start looking for the prefix
@@ -587,7 +571,11 @@ public class Board {
         int row = startingRow - 1;
         StringBuilder sb = new StringBuilder();
         while (row >= 0 && !tiles[row][col].isEmpty()) {
-            sb.insert(0, tiles[row][col].getTileCharacter());
+            if (tiles[row][col].getTile().isBlank()) {
+                sb.insert(0, '*');
+            } else {
+                sb.insert(0, tiles[row][col].getTileCharacter());
+            }
             row--;
         }
         return sb.toString();
@@ -603,10 +591,13 @@ public class Board {
         int row = startingRow + 1;
         StringBuilder sb = new StringBuilder();
         while (row <= size - 1 && !tiles[row][col].isEmpty()) {
-            sb.append(tiles[row][col].getTileCharacter());
+            if (tiles[row][col].getTile().isBlank()) {
+                sb.append('*');
+            } else {
+                sb.append(tiles[row][col].getTileCharacter());
+            }
             row++;
         }
-
         return sb.toString();
     }
 
@@ -692,7 +683,6 @@ public class Board {
 
     private void dropHandler(DropEvent dropEvent) {
         Position pos = dropEvent.getPos();
-        System.out.println(pos);
 
         if (overridden.containsKey(dropEvent.getTile()) || dropEvent.getTile() == null) {
             Position oldPos = (dropEvent.getTile() == null) ? dropEvent.getPos() : overridden.get(dropEvent.getTile());

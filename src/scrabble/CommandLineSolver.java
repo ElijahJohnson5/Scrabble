@@ -6,6 +6,7 @@
 package scrabble;
 
 import scrabble.player.CPUPlayer;
+import scrabble.player.Player;
 
 
 import java.io.*;
@@ -14,12 +15,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CommandLineSolver {
-    private CPUPlayer cpuPlayer;
+    private Player cpuPlayer;
     private Dictionary dict;
     private Board board;
     private TileManager manager;
 
     public CommandLineSolver(BufferedReader br) {
+        System.out.println("Initializing dictionary");
         dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.DAWG);
         dict.insert(br);
         board = new Board();
@@ -49,6 +51,7 @@ public class CommandLineSolver {
         }
         Scanner in = new Scanner(System.in);
         while (in.hasNext()) {
+            System.out.println("Enter board and tray");
             long start = System.currentTimeMillis();
             commandLineSolver.findBest(in);
             long end = System.currentTimeMillis();
@@ -56,7 +59,7 @@ public class CommandLineSolver {
         }
     }
 
-    public void findBest(Scanner in) {
+    private void findBest(Scanner in) {
         board.initialize(in, manager);
         String lastLine = in.nextLine();
         lastLine = lastLine.toUpperCase();
@@ -67,7 +70,7 @@ public class CommandLineSolver {
         cpuPlayer = new CPUPlayer(manager, board, tray);
         cpuPlayer.takeTurn(dict);
         System.out.println(board);
-        System.out.println("Word score: " + cpuPlayer.getWordScore());
-        System.out.println("Word played: " + cpuPlayer.getWordPlayed());
+        System.out.println("Word score: " + cpuPlayer.getLastWordPlayedScore());
+        System.out.println("Word played: " + cpuPlayer.getLastWordPlayed());
     }
 }

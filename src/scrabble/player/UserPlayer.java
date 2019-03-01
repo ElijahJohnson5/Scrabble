@@ -74,7 +74,7 @@ public class UserPlayer extends Player {
     }
 
     public void attemptPlayMove(Dictionary dict) {
-        if (currentPositions.size() > 0) {
+        if (currentMove.size() > 0) {
             if (legalMove(dict)) {
                 playMove = true;
             }

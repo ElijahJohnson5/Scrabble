@@ -7,6 +7,7 @@
 
 package scrabble;
 
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -684,8 +685,12 @@ public class Board {
     private void dropHandler(DropEvent dropEvent) {
         Position pos = dropEvent.getPos();
 
-        if (overridden.containsKey(dropEvent.getTile()) || dropEvent.getTile() == null) {
-            Position oldPos = (dropEvent.getTile() == null) ? dropEvent.getPos() : overridden.get(dropEvent.getTile());
+        if (overridden.containsValue(pos) && !dropEvent.isReset()) {
+            return;
+        }
+
+        if (overridden.containsKey(dropEvent.getTile())) {
+            Position oldPos = overridden.get(dropEvent.getTile());
             tiles[oldPos.getRow()][oldPos.getCol()].unPlaceTile();
             Pane p = this.tiles[oldPos.getRow()][oldPos.getCol()].getDisplay();
             GridPane.setColumnIndex(p, oldPos.getCol());
@@ -701,6 +706,18 @@ public class Board {
         }
 
         if (pos.getRow() >= 0 && pos.getRow() < size && pos.getCol() >= 0 && pos.getCol() < size && isEmpty(pos.getRow(), pos.getCol()) && dropEvent.getTile() != null) {
+            if (dropEvent.getTile().isBlank()) {
+                Set<Character> alphabet = new HashSet<>();
+                for (char start = 'A'; start <= 'Z'; start++) {
+                    alphabet.add(start);
+                }
+                ChoiceDialog<Character> dialog = new ChoiceDialog<>('A', alphabet);
+                dialog.setTitle("Blank Letter Choice");
+                dialog.setHeaderText("Blank Letter Choice");
+                dialog.setContentText("Choose your letter: ");
+                Optional<Character> result = dialog.showAndWait();
+                result.ifPresent(letter -> System.out.println(letter));
+            }
             overridden.put(dropEvent.getTile(), pos);
             tiles[pos.getRow()][pos.getCol()].placeTile(dropEvent.getTile());
             Pane p = this.tiles[pos.getRow()][pos.getCol()].getDisplay();

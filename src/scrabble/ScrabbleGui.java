@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 
 public class ScrabbleGui extends Application {
     private Player currentPlayer;
-    public final static boolean DEBUG_PRINT = false;
+    public final static boolean DEBUG_PRINT = true;
     private final static String LETTER_DIS = "/default_letter_distributions.txt";
     private final static String DEFAULT_BOARD = "/default_board.txt";
 

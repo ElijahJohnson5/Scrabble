@@ -1,5 +1,6 @@
 package scrabble.player;
 
+import javafx.scene.control.Alert;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import scrabble.*;
@@ -78,7 +79,23 @@ public class UserPlayer extends Player {
             if (legalMove(dict)) {
                 playMove = true;
             }
+        } else {
+            createAndShowAlert(Alert.AlertType.INFORMATION,
+                    "Invalid Move",
+                    "That is not a valid move",
+                    "");
         }
+    }
+
+    private void createAndShowAlert(Alert.AlertType type,
+                                    String title,
+                                    String header,
+                                    String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     private boolean legalMove(Dictionary dict) {
@@ -88,6 +105,10 @@ public class UserPlayer extends Player {
         endPos = currentPositions.get(currentPositions.size() - 1);
         Position.Direction dir = startPos.getDirection(endPos);
         if (dir == Position.Direction.BOTH && !startPos.equals(endPos)) {
+            createAndShowAlert(Alert.AlertType.INFORMATION,
+                    "Invalid Move",
+                    "That is not a valid move",
+                    "");
             return false;
         }
         if (dir == Position.Direction.BOTH) {
@@ -119,6 +140,10 @@ public class UserPlayer extends Player {
                 if (p.distance(prev) > 1) {
                     currentPositions.removeAll(otherPos);
                     otherPos.clear();
+                    createAndShowAlert(Alert.AlertType.INFORMATION,
+                            "Invalid Move",
+                            "That is not a valid move",
+                            "Move must be all down or all across");
                     return false;
                 }
             }
@@ -128,6 +153,10 @@ public class UserPlayer extends Player {
         if (!hasAnchorSomewhere) {
             currentPositions.removeAll(otherPos);
             otherPos.clear();
+            createAndShowAlert(Alert.AlertType.INFORMATION,
+                    "Invalid Move",
+                    "That is not a valid move",
+                    "Move must start from another tile");
             return false;
         }
 
@@ -145,6 +174,10 @@ public class UserPlayer extends Player {
                     if (cross != null && !cross.contains(board.getTile(startPos.getRow(), i).getCharacter())) {
                         currentPositions.removeAll(otherPos);
                         otherPos.clear();
+                        createAndShowAlert(Alert.AlertType.INFORMATION,
+                                "Invalid Move",
+                                "That is not a valid move",
+                                "All sub words are not a word");
                         return false;
                     }
                     sb.append(board.getTile(startPos.getRow(), i).getCharacter());
@@ -159,6 +192,10 @@ public class UserPlayer extends Player {
                     if (cross != null && !cross.contains(board.getTile(startPos.getCol(), i).getCharacter())) {
                         currentPositions.removeAll(otherPos);
                         otherPos.clear();
+                        createAndShowAlert(Alert.AlertType.INFORMATION,
+                                "Invalid Move",
+                                "That is not a valid move",
+                                "All sub words are not a word");
                         return false;
                     }
                     sb.append(board.getTile(startPos.getCol(), i).getCharacter());
@@ -172,6 +209,10 @@ public class UserPlayer extends Player {
             currentPositions.removeAll(otherPos);
             otherPos.clear();
             lastScore = -1;
+            createAndShowAlert(Alert.AlertType.INFORMATION,
+                    "Invalid Word",
+                    "That is not a valid word",
+                    "The word you are trying to play isn't in the dictionary");
             return false;
         }
         if (ScrabbleGui.DEBUG_PRINT) {
@@ -262,7 +303,9 @@ public class UserPlayer extends Player {
     }
 
     private void dropCallback(Tile dropped, Position pos) {
-        currentMove.put(dropped, pos);
+        if (!currentMove.containsValue(pos)) {
+            currentMove.put(dropped, pos);
+        }
         if (ScrabbleGui.DEBUG_PRINT) {
             System.out.println(currentPositions);
             System.out.println(currentMove);

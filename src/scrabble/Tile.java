@@ -101,7 +101,7 @@ public class Tile {
                 double sceneY = mouseEvent.getSceneY() - 50;
                 double sceneX = mouseEvent.getSceneX() - 25;
                 Position pos = new Position((int)Math.floor(sceneY / 50), (int)Math.round(sceneX / 50));
-                DropEvent drop = new DropEvent(pos, this);
+                DropEvent drop = new DropEvent(pos, this, true);
                 board.fireEvent(drop);
                 hand.getChildren().add(tile);
                 returnedCallback.accept(this);
@@ -124,7 +124,7 @@ public class Tile {
             double sceneY = mouseDragEvent.getSceneY() - 50;
             double sceneX = mouseDragEvent.getSceneX() - 25;
             Position pos = new Position((int)Math.floor(sceneY / 50), (int)Math.round(sceneX / 50));
-            DropEvent drop = new DropEvent(pos, this);
+            DropEvent drop = new DropEvent(pos, this, false);
             board.fireEvent(drop);
             tile.setTranslateY(0);
             tile.setTranslateX(0);

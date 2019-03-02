@@ -7,7 +7,7 @@ Compiled with Java 10
   * Run the command `java -jar CommandLineSolver.jar [Dictionary File]`
   * It will now prompt you for the size of the board on the first line then the rest of the board (see board configuration for more info)
   * An easier way is to have the board in a file and redirect it to stdin `java -jar CommandLineSolver.jar [Dictionary file] < [Test Cases]`
-  * There are example test cases in [test.txt](../../blob/master/resources/test.txt) and a scrabble dictionary in [sowpods.txt](../../blob/master/resources/sowpods.txt) for use
+  * There are example test cases in [test.txt](/master/resources/test.txt) and a scrabble dictionary in [sowpods.txt](/master/resources/sowpods.txt) for use
   * To Run with these test cases you would run (assuming they are all in the same directory) `java -jar CommandLineSolver.jar sowpods.txt < test.txt`
 
 #### Known Bugs

@@ -32,6 +32,9 @@ public class TileManager {
      * @return true if it initializes correctly otherwise false
      */
     public boolean initialize(BufferedReader br) {
+        countMap.clear();
+        valueMap.clear();
+        bag.clear();
         try {
             String line;
             //Read line by line

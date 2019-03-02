@@ -45,6 +45,7 @@ public class UserPlayer extends Player {
     public UserPlayer(TileManager manager, Board board, HBox hand) {
         //Call player constructor
         super(manager, board, hand);
+        hand.getChildren().clear();
         //Initialize all values
         currentMove = new HashMap<>();
         currentPositions = new ArrayList<>();
@@ -104,6 +105,7 @@ public class UserPlayer extends Player {
         } else if (finishExchangeMove) {
             //They exchanged tiles this turn instead of playing a word
             finishExchangeMove = false;
+            exchanging = false;
             //Update drag and drop
             tray.setDragAndDrop(hand,
                     (GridPane)hand.getParent().getChildrenUnmodifiable().get(1),
@@ -112,6 +114,9 @@ public class UserPlayer extends Player {
             currentPositions.clear();
             currentMove.clear();
             startPos = null;
+            lastWord = null;
+            currentWord = null;
+            lastScore = 0;
             endPos = null;
             return 0;
         }
@@ -175,34 +180,49 @@ public class UserPlayer extends Player {
      *                       call
      */
     public void exchangeTile(MouseDragEvent mouseDragEvent) {
-        //They are exchanging tiles
-        exchanging = true;
-        //Get the gesture source, will always be a pane
-        Pane p = (Pane)mouseDragEvent.getGestureSource();
-        board.resetPlaced();
-        //Get the board node
-        GridPane board =
-                (GridPane)hand.getParent().getChildrenUnmodifiable().get(1);
-        //Tray should always contain the tile whose pane is p
-        if (tray.contains(p)) {
-            //Get the tile from the pane
-            Tile t = tray.getTile(p);
-            //If it was on the board we need to fire an event to the board
-            if (p.getParent().equals(board))  {
-                DropEvent dropEvent = new DropEvent(null, t, true);
-                //Fire the dropEvent (really a reset)
-                board.fireEvent(dropEvent);
-                //Remove it from the currentMove list
-                returnedCallback(t);
-                //Reset translates
-                p.setTranslateX(0);
-                p.setTranslateY(0);
+        if (!manager.isEmpty()) {
+            //They are exchanging tiles
+            exchanging = true;
+            //Get the gesture source, will always be a pane
+            Pane p = (Pane) mouseDragEvent.getGestureSource();
+            board.resetPlaced();
+            //Get the board node
+            GridPane board =
+                    (GridPane) hand.getParent().getChildrenUnmodifiable().get(1);
+            //Tray should always contain the tile whose pane is p
+            if (tray.contains(p)) {
+                //Get the tile from the pane
+                Tile t = tray.getTile(p);
+                //If it was on the board we need to fire an event to the board
+                if (p.getParent().equals(board)) {
+                    DropEvent dropEvent = new DropEvent(null, t, true);
+                    //Fire the dropEvent (really a reset)
+                    board.fireEvent(dropEvent);
+                    //Remove it from the currentMove list
+                    returnedCallback(t);
+                    //Reset translates
+                    p.setTranslateX(0);
+                    p.setTranslateY(0);
+                } else {
+                    //Reset translates
+                    p.setTranslateX(0);
+                    p.setTranslateY(0);
+                }
+                //Remove all children from the hand HBox
+                hand.getChildren().clear();
+                //Replace the tile t with a new one from manager
+                tray.replace(manager, t);
+                hand.getChildren().addAll(tray.getTileDisplay());
             }
-            //Remove all children from the hand HBox
-            hand.getChildren().clear();
-            //Replace the tile t with a new one from manager
-            tray.replace(manager, t);
-            hand.getChildren().addAll(tray.getTileDisplay());
+        } else {
+            createAndShowAlert(Alert.AlertType.INFORMATION,
+                    "Cannot exchange",
+                    "No more tiles to exchange with",
+                    "");
+            Pane p = (Pane) mouseDragEvent.getGestureSource();
+            //Reset translates
+            p.setTranslateX(0);
+            p.setTranslateY(0);
         }
 
         mouseDragEvent.consume();

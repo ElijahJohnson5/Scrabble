@@ -56,6 +56,7 @@ public class CPUPlayer extends Player {
      */
     public CPUPlayer(TileManager manager, Board board, HBox hand) {
         super(manager, board, hand);
+        hand.getChildren().clear();
         tray.setTiles(manager.drawTray(7));
         legalMoves = new HashSet<>();
         currentMove = new ArrayList<>();

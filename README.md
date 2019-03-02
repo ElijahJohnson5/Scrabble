@@ -89,7 +89,7 @@ Compiled with java 10
 The entry point for the gui version is the ScrabbleGui.main function
 
 #### Known Bugs
-There are no known bugs with the gui version
+* When moving a tile from one spot on the board to another an exception is thrown from javafx, it doesn't seem to break anything and there is no way to catch it
 
 #### Unfinished Features
 * Showing who won the game

@@ -192,8 +192,15 @@ public class Tray {
                 return t;
             }
         }
-
         return null;
+    }
+
+    public int getTrayScore() {
+        int sum = 0;
+        for (Tile t : tiles) {
+            sum += t.getScore();
+        }
+        return sum;
     }
 
     /**

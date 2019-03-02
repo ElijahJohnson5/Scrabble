@@ -52,6 +52,13 @@ public abstract class Player {
         this.hand = hand;
     }
 
+    public int getLeftoverTileScore() {
+        if (tray != null) {
+            return tray.getTrayScore();
+        }
+        return 0;
+    }
+
     /**
      * Takes a turn for the player, implemented
      * by child class

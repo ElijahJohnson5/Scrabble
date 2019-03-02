@@ -31,7 +31,7 @@
         </Label>
         <Label fx:id="playerScore" text="0"/>
         <Button fx:id="playMove" text="End Turn"/>
-        <Label text="Drop Here to exchange" visible="false" fx:id="exchange">
+        <Label text="Drop Here to exchange">
             <padding>
                 <Insets top="200"/>
             </padding>

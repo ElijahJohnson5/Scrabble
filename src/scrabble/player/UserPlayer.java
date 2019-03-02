@@ -1,8 +1,12 @@
 package scrabble.player;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import scrabble.*;
 import scrabble.Dictionary;
 
@@ -13,6 +17,8 @@ public class UserPlayer extends Player {
     private List<Position> currentPositions;
     private List<Position> otherPos;
     private boolean playMove;
+    private boolean finishExchangeMove;
+    private boolean exchanging;
     private String currentWord;
     private String lastWord;
     private int lastScore;
@@ -28,6 +34,8 @@ public class UserPlayer extends Player {
         currentWord = null;
         startPos = null;
         endPos = null;
+        finishExchangeMove = false;
+        exchanging = false;
         tray.setTiles(manager.drawTray(7));
         hand.getChildren().addAll(tray.getTileDisplay());
     }
@@ -60,6 +68,17 @@ public class UserPlayer extends Player {
             currentPositions.clear();
             currentMove.clear();
             return 0;
+        } else if (finishExchangeMove) {
+            finishExchangeMove = false;
+            tray.setDragAndDrop(hand,
+                    (GridPane)hand.getParent().getChildrenUnmodifiable().get(1),
+                    this::dropCallback,
+                    this::returnedCallback);
+            currentPositions.clear();
+            currentMove.clear();
+            startPos = null;
+            endPos = null;
+            return 0;
         }
         return 1;
     }
@@ -74,16 +93,57 @@ public class UserPlayer extends Player {
         return lastScore;
     }
 
-    public void attemptPlayMove(Dictionary dict) {
-        if (currentMove.size() > 0) {
-            if (legalMove(dict)) {
-                playMove = true;
+    public void attemptPlayMove(MouseEvent mouseEvent, Dictionary dict) {
+        Button source = (Button)mouseEvent.getSource();
+        if (source.getId().equals("playMove") && !exchanging) {
+            if (currentMove.size() > 0) {
+                if (legalMove(dict)) {
+                    playMove = true;
+                }
+            } else {
+                createAndShowAlert(Alert.AlertType.INFORMATION,
+                        "Invalid Move",
+                        "That is not a valid move",
+                        "");
             }
         } else {
-            createAndShowAlert(Alert.AlertType.INFORMATION,
-                    "Invalid Move",
-                    "That is not a valid move",
-                    "");
+            finishExchangeMove = true;
+        }
+    }
+
+    public void exchangeTile(MouseDragEvent mouseDragEvent) {
+        exchanging = true;
+        Pane p = (Pane)mouseDragEvent.getGestureSource();
+        board.resetPlaced();
+        GridPane board = (GridPane)hand.getParent().getChildrenUnmodifiable().get(1);
+        if (tray.contains(p)) {
+            Tile t = tray.getTile(p);
+            if (p.getParent().equals(board))  {
+                DropEvent dropEvent = new DropEvent(null, t, true);
+                board.fireEvent(dropEvent);
+                returnedCallback(t);
+                p.setTranslateX(0);
+                p.setTranslateY(0);
+            }
+            hand.getChildren().clear();
+            tray.replace(manager, t);
+            hand.getChildren().addAll(tray.getTileDisplay());
+        }
+    }
+
+    public void resetTile(MouseDragEvent mouseDragEvent) {
+        Pane p = (Pane)mouseDragEvent.getGestureSource();
+        GridPane board = (GridPane)hand.getParent().getChildrenUnmodifiable().get(1);
+        if (tray.contains(p)) {
+            Tile t = tray.getTile(p);
+            if (p.getParent().equals(board))  {
+                DropEvent dropEvent = new DropEvent(null, t, true);
+                board.fireEvent(dropEvent);
+                returnedCallback(t);
+                p.setTranslateX(0);
+                p.setTranslateY(0);
+                hand.getChildren().add(p);
+            }
         }
     }
 

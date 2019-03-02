@@ -134,12 +134,18 @@ public class Board {
         }
     }
 
+    /**
+     * Initialize this board from a scanner
+     * @param in the scanner of system.in
+     * @param manager the tile manager, used for scoring
+     */
     public void initialize(Scanner in, TileManager manager) {
         this.tileManager = manager;
         size = in.nextInt();
         in.nextLine();
         tiles = new BoardSquare[size][size];
         String line;
+        //Read in line by line up to size
         for (int i = 0; i < size; i++) {
             line = in.nextLine();
             parseLine(line, i);
@@ -192,10 +198,6 @@ public class Board {
         return tiles[row][col].getTile();
     }
 
-    public Tile getTile(Position pos) {
-        return tiles[pos.getRow()][pos.getCol()].getTile();
-    }
-
     /**
      * Play a word on the board
      * @param word the string representing the word to be played
@@ -241,14 +243,16 @@ public class Board {
                         tiles.remove(j);
                     }
                 }
+                int row = current.getRow();
+                int col = current.getCol();
                 //Play tile
-                this.tiles[current.getRow()][current.getCol()].playTile(toPlay);
+                this.tiles[row][col].playTile(toPlay);
                 if (initGui) {
-                    Pane p = this.tiles[current.getRow()][current.getCol()].getDisplay();
-                    GridPane.setColumnIndex(p, current.getCol());
-                    GridPane.setRowIndex(p, current.getRow());
+                    Pane p = this.tiles[row][col].getDisplay();
+                    GridPane.setColumnIndex(p, col);
+                    GridPane.setRowIndex(p, row);
                     if (!board.getChildren().contains(p)) {
-                        board.getChildren().set(current.getRow() * size + current.getCol(), p);
+                        board.getChildren().set(row * size + col, p);
                     }
                 }
                 //If it is across play
@@ -368,11 +372,13 @@ public class Board {
         String string = (prefix ? buildPrefixString(row, col)
                 : buildSuffixString(row, col));
         StringBuilder actual = new StringBuilder();
+        //Keep two strings, one with actual letters one with * as blanks
         if (string.contains("*")) {
             if (prefix) {
                 for (int i = 0; i < string.length(); i++) {
                     if (string.charAt(i) == '*') {
-                        actual.append(tiles[row - (i + 1)][col].getTileCharacter());
+                        actual.append(tiles[row - (i + 1)][col]
+                                .getTileCharacter());
                     } else {
                         actual.append(string.charAt(i));
                     }
@@ -380,7 +386,8 @@ public class Board {
             } else {
                 for (int i = 0; i < string.length(); i++) {
                     if (string.charAt(i) == '*') {
-                        actual.append(tiles[row + (i + 1)][col].getTileCharacter());
+                        actual.append(tiles[row + (i + 1)][col]
+                                .getTileCharacter());
                     } else {
                         actual.append(string.charAt(i));
                     }
@@ -459,7 +466,10 @@ public class Board {
      * @return the cross sum value if the cross check was added
      * otherwise -1
      */
-    private int checkTiles(Dictionary dict, Map<Integer, Set<Character>> crossCheckMap, int row, int col) {
+    private int checkTiles(Dictionary dict,
+                           Map<Integer, Set<Character>> crossCheckMap,
+                           int row,
+                           int col) {
         //If there is a tile above and below
         if (isBelow(row, col) && isAbove(row, col) && isEmpty(row, col)) {
             //Get prefix and suffix
@@ -509,7 +519,7 @@ public class Board {
             Tile currentTile = null;
             //Get the tile that is the letter of the current word
             //Remove it from the copy of move
-            if (this.tiles[current.getRow()][current.getCol()].isEmpty()) {
+            if (tiles[current.getRow()][current.getCol()].isEmpty()) {
                 for (j = 0; j < moveCopy.size(); j++) {
                     if (moveCopy.get(j).getCharacter() == word.charAt(i)) {
                         currentTile = moveCopy.get(j);
@@ -531,16 +541,21 @@ public class Board {
                         moveCopy.remove(j);
                     }
                 }
+                int letterMult = tiles[current.getRow()][current.getCol()]
+                        .getLetterMultiplier();
+                int wordMult = tiles[current.getRow()][current.getCol()]
+                        .getWordMultiplier();
                 //Add the score from pos
                 currentCrossSum = getScoreFromPos(current);
                 if (currentCrossSum != 0) {
-                    currentCrossSum += currentTile.getScore() * this.tiles[current.getRow()][current.getCol()].getLetterMultiplier();
+                    currentCrossSum += currentTile.getScore()
+                            * letterMult;
                 }
                 //Get the word multiplier
-                wordMultiplier *= this.tiles[current.getRow()][current.getCol()].getWordMultiplier();
+                wordMultiplier *= wordMult;
                 //Get the letter score multiplied by letter multiplier
-                sum += currentTile.getScore() * this.tiles[current.getRow()][current.getCol()].getLetterMultiplier();
-                if (potentialAnchors.contains(current) && this.tiles[current.getRow()][current.getCol()].getWordMultiplier() > 1) {
+                sum += currentTile.getScore() * letterMult;
+                if (potentialAnchors.contains(current) && wordMult > 1) {
                     sum += currentCrossSum;
                 } else {
                     crossSum += currentCrossSum;
@@ -548,7 +563,8 @@ public class Board {
                 //Increment current
                 current = new Position(current.getRow(), current.getCol() + 1);
             } else {
-                sum += this.tiles[current.getRow()][current.getCol()].getTile().getScore();
+                sum += tiles[current.getRow()][current.getCol()]
+                        .getTile().getScore();
                 current = new Position(current.getRow(), current.getCol() + 1);
             }
         }
@@ -682,43 +698,111 @@ public class Board {
         return sb.toString();
     }
 
+    /**
+     * Resets any tiles which have been placed but not played
+     */
+    public void resetPlaced() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                Position pos = new Position(i, j);
+                //Check if the position has been overridden
+                if (overridden.containsValue(pos)) {
+                    Tile t = tiles[i][j].getTile();
+                    //Un place the tile
+                    tiles[i][j].unPlaceTile();
+                    //Reset display
+                    Pane p = this.tiles[i][j].getDisplay();
+                    GridPane.setColumnIndex(p, pos.getCol());
+                    GridPane.setRowIndex(p, pos.getRow());
+                    board.getChildren().set(i * size + j, p);
+                    //Reset blank to blank
+                    if (t.isBlank()) {
+                        t.setCharacter('*');
+                        t.changeBlankText('*');
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Handles a custom dropEvent,
+     * dropEvents get fired from tiles when they are dropped on
+     * the board
+     * @param dropEvent the drop event that was fired
+     */
     private void dropHandler(DropEvent dropEvent) {
         Position pos = dropEvent.getPos();
-
-        if (overridden.containsValue(pos) && !dropEvent.isReset()) {
+        Tile t = dropEvent.getTile();
+        //Check if the position is already
+        //occupied
+        if (overridden.containsValue(pos)
+                && !dropEvent.isReset()) {
             return;
         }
 
-        if (overridden.containsKey(dropEvent.getTile())) {
-            Position oldPos = overridden.get(dropEvent.getTile());
+        //Check if position is possible
+        if (pos != null && (pos.getCol() < 0
+                || pos.getRow() > size - 1
+                || pos.getRow() < 0
+                || pos.getCol() > size - 1)) {
+            return;
+        }
+
+        //Check if the tile was already played
+        if (overridden.containsKey(t)) {
+            if (pos == null) {
+                pos = overridden.get(t);
+            }
+            //Reset the old position of the tile
+            Position oldPos = overridden.get(t);
             tiles[oldPos.getRow()][oldPos.getCol()].unPlaceTile();
+            //Reset display at old pos
             Pane p = this.tiles[oldPos.getRow()][oldPos.getCol()].getDisplay();
             GridPane.setColumnIndex(p, oldPos.getCol());
             GridPane.setRowIndex(p, oldPos.getRow());
             board.getChildren().set(oldPos.getRow() * size + oldPos.getCol(), p);
             if (!isEmpty(pos.getRow(), pos.getCol())) {
-                ((HBox) board.getParent().getChildrenUnmodifiable().get(2)).getChildren().add(dropEvent.getTile().getDisplay());
+                //Add back to the player hand if the position is not empty
+                ((HBox) board.getParent().getChildrenUnmodifiable().get(2))
+                        .getChildren().add(t.getDisplay());
             }
-            overridden.remove(dropEvent.getTile());
+            //Remove from map
+            overridden.remove(t);
+            //Reset blank
             if (pos.equals(oldPos)) {
+                if (t.isBlank()) {
+                    t.setCharacter('*');
+                    t.changeBlankText('*');
+                }
                 return;
             }
         }
-
-        if (pos.getRow() >= 0 && pos.getRow() < size && pos.getCol() >= 0 && pos.getCol() < size && isEmpty(pos.getRow(), pos.getCol()) && dropEvent.getTile() != null) {
-            if (dropEvent.getTile().isBlank()) {
+        //Check to make sure the position is empty
+        if (pos != null && isEmpty(pos.getRow(), pos.getCol())
+                && t != null) {
+            //If a blank is being dropped
+            //Show option dialog for the letter it should be
+            if (t.isBlank()) {
                 Set<Character> alphabet = new HashSet<>();
                 for (char start = 'A'; start <= 'Z'; start++) {
                     alphabet.add(start);
                 }
-                ChoiceDialog<Character> dialog = new ChoiceDialog<>('A', alphabet);
+                ChoiceDialog<Character> dialog =
+                        new ChoiceDialog<>('A', alphabet);
                 dialog.setTitle("Blank Letter Choice");
                 dialog.setHeaderText("Blank Letter Choice");
                 dialog.setContentText("Choose your letter: ");
                 Optional<Character> result = dialog.showAndWait();
-                result.ifPresent(letter -> System.out.println(letter));
+                //Set the blank to the character
+                result.ifPresent(letter -> {
+                    t.setCharacter(letter);
+                    t.changeBlankText(letter);
+                });
             }
+            //Add to the overridden map
             overridden.put(dropEvent.getTile(), pos);
+            //Temporarily place tile
             tiles[pos.getRow()][pos.getCol()].placeTile(dropEvent.getTile());
             Pane p = this.tiles[pos.getRow()][pos.getCol()].getDisplay();
             GridPane.setColumnIndex(p, pos.getCol());

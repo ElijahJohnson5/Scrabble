@@ -84,26 +84,48 @@ public class Tile {
     }
 
 
-    public void setDragAndDrop(HBox hand, GridPane board, BiConsumer<Tile, Position> droppedCallBack, Consumer<Tile> returnedCallback) {
+    /**
+     * Sets up drag and drop listeners for this tile
+     * @param hand the HBox of the hand that this tile is in
+     * @param board the GridPane that represents the board
+     * @param droppedCallBack A Callback function to send the dropped
+     *                        tile and the position the tile was dropped at
+     * @param returnedCallback A Callback function to send the returned
+     *                         tile if the tile was returned
+     */
+    public void setDragAndDrop(HBox hand,
+                               GridPane board,
+                               BiConsumer<Tile, Position> droppedCallBack,
+                               Consumer<Tile> returnedCallback) {
+        //Make sure display is made
         if (tile == null) {
             createDisplay();
         }
+        //Start drag on drag detected
         tile.setOnDragDetected(mouseEvent -> {
             if (mouseEvent.isPrimaryButtonDown()) {
                 tile.startFullDrag();
+                //Make sure it is front of everything else
                 tile.setViewOrder(-2);
             }
             mouseEvent.consume();
         });
 
+        //Reset tile if it is right clicked
         tile.setOnMousePressed(mouseEvent -> {
             if (mouseEvent.isSecondaryButtonDown()) {
                 double sceneY = mouseEvent.getSceneY() - 50;
                 double sceneX = mouseEvent.getSceneX() - 25;
-                Position pos = new Position((int)Math.floor(sceneY / 50), (int)Math.round(sceneX / 50));
+                //Get the position with respect to the board
+                Position pos =
+                        new Position(
+                                (int)Math.floor(sceneY / 50),
+                                (int)Math.round(sceneX / 50));
                 DropEvent drop = new DropEvent(pos, this, true);
+                //Fire a drop event, that is really a reset
                 board.fireEvent(drop);
                 hand.getChildren().add(tile);
+                //Call returned callback
                 returnedCallback.accept(this);
                 tile.setTranslateY(0);
                 tile.setTranslateX(0);
@@ -112,6 +134,7 @@ public class Tile {
             mouseEvent.consume();
         });
 
+        //Make tile follow mouse when it is dragged
         tile.setOnMouseDragged(mouseEvent -> {
             if (mouseEvent.isPrimaryButtonDown()) {
                 tile.setTranslateX(mouseEvent.getX() + tile.getTranslateX() - 25);
@@ -120,15 +143,22 @@ public class Tile {
             mouseEvent.consume();
         });
 
+        //When they let go of the drag
         tile.setOnMouseDragReleased(mouseDragEvent -> {
             double sceneY = mouseDragEvent.getSceneY() - 50;
             double sceneX = mouseDragEvent.getSceneX() - 25;
-            Position pos = new Position((int)Math.floor(sceneY / 50), (int)Math.round(sceneX / 50));
+            //Get position with respect to board
+            Position pos =
+                    new Position(
+                            (int)Math.floor(sceneY / 50),
+                            (int)Math.round(sceneX / 50));
             DropEvent drop = new DropEvent(pos, this, false);
+            //Fire dropevent to board
             board.fireEvent(drop);
             tile.setTranslateY(0);
             tile.setTranslateX(0);
             tile.setViewOrder(0);
+            //Call dropped if the tile is now on the board
             if (!tile.getParent().equals(hand)) {
                 droppedCallBack.accept(this, pos);
             }
@@ -197,13 +227,22 @@ public class Tile {
         return sb.toString();
     }
 
+    /**
+     * Override equals for use in collections
+     * Checks if two tiles are equal
+     * @param obj the other object to check
+     *            if it equals this one
+     * @return true if obj equals tile otherwise false
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
 
         if (!(obj instanceof Tile)) return false;
         Tile other = (Tile)obj;
-
-        return (this.tile == other.tile && this.character == other.character && this.score == other.score);
+        //Make sure all values equal
+        return (this.tile == other.tile
+                && this.character == other.character
+                && this.score == other.score);
     }
 }

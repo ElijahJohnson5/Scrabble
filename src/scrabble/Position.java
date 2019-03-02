@@ -7,7 +7,9 @@
 package scrabble;
 
 public class Position implements Comparable<Position> {
-
+    /**
+     * Direction from one position to another
+     */
     public enum Direction {
         DOWN, ACROSS, BOTH
     }
@@ -59,22 +61,47 @@ public class Position implements Comparable<Position> {
         return new Position(this.col, this.row);
     }
 
+    /**
+     * Increments the column of this pos by 1
+     */
     public void incrementCol() {
         this.col++;
     }
 
+    /**
+     * Increments the row of this pos by 1
+     */
     public void incrementRow() {
         this.row++;
     }
 
+    /**
+     * Decrements the column of this pos by 1
+     */
     public void decrementCol() { this.col--; }
 
+    /**
+     * Decrements the row of this pos by 1
+     */
     public void decrementRow() { this.row--; }
 
+    /**
+     * Gets the distance between this position
+     * and another position
+     * @param other the other position to get the distance from
+     * @return the distance between these two positions in manhattan geometry
+     */
     public int distance(Position other) {
-        return (Math.abs(other.col - this.col) + Math.abs(other.row - this.row));
+        return (Math.abs(other.col - this.col)
+                + Math.abs(other.row - this.row));
     }
 
+    /**
+     * Gets the direction from one position
+     * to another position
+     * @param other the other position to get the direction to
+     * @return the direction from this position to other
+     */
     public Direction getDirection(Position other) {
         if (this.row - other.row != 0) {
             return Direction.DOWN;
@@ -102,7 +129,7 @@ public class Position implements Comparable<Position> {
      */
     @Override
     public int hashCode() {
-        return (row * 50 + col) * 97;
+        return (row * 100 + col) * 97;
     }
 
     /**
@@ -120,8 +147,15 @@ public class Position implements Comparable<Position> {
         return (this.row == other.row && this.col == other.col);
     }
 
+    /**
+     * Compares two positions, for comparable
+     * interface
+     * @param o the other position
+     * @return the subtraction of this position on a board
+     * that is 100 by 100
+     */
     @Override
     public int compareTo(Position o) {
-        return (this.row * 50 + this.col) - (o.row * 50 + o.col);
+        return (this.row * 100 + this.col) - (o.row * 100 + o.col);
     }
 }

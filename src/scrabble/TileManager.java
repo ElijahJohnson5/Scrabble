@@ -135,4 +135,12 @@ public class TileManager {
         bag.addAll(tray);
         return newTray;
     }
+
+    /**
+     * Puts a tile back in the bag
+     * @param t the tile to be put back in the bag
+     */
+    public void putBack(Tile t) {
+        bag.add(t);
+    }
 }

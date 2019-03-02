@@ -13,6 +13,10 @@ import scrabble.Dictionary;
 import java.util.*;
 
 public class CPUPlayer extends Player {
+    /**
+     * Member variables for keeping track of
+     * the current move and the current highest move
+     */
     private String highestScoringLeftOfAnchor;
     private String highestScoringWord;
     private int highestScoring;
@@ -27,6 +31,13 @@ public class CPUPlayer extends Player {
     private Position highestEndPos;
     private String leftOfAnchor;
 
+    /**
+     * Constructor used for command line solver
+     * Initialize with a tray
+     * @param manager The tile manager handles drawing tiles
+     * @param board the current board
+     * @param tray the tray to initialize the computer tray to
+     */
     public CPUPlayer(TileManager manager, Board board, List<Tile> tray) {
         super(manager, board, tray);
         legalMoves = new HashSet<>();
@@ -37,6 +48,12 @@ public class CPUPlayer extends Player {
         resetValues();
     }
 
+    /**
+     * Constructor used for gui version
+     * @param manager the Tile manager handles drawing tiles from bag
+     * @param board the current board
+     * @param hand the HBox representing the computer hand
+     */
     public CPUPlayer(TileManager manager, Board board, HBox hand) {
         super(manager, board, hand);
         tray.setTiles(manager.drawTray(7));
@@ -47,6 +64,9 @@ public class CPUPlayer extends Player {
         resetValues();
     }
 
+    /**
+     * Reset all values to default values
+     */
     private void resetValues() {
         legalMoves.clear();
         highestStartPos = null;
@@ -63,6 +83,10 @@ public class CPUPlayer extends Player {
         highestScoring = 0;
     }
 
+    /**
+     * Gets the last word played by this player
+     * @return the string representing the last word played
+     */
     @Override
     public String getLastWordPlayed() {
         if (highestScoringLeftOfAnchor != null) {
@@ -72,6 +96,10 @@ public class CPUPlayer extends Player {
         }
     }
 
+    /**
+     * Gets the score of the last word played by this player
+     * @return the last highestScoring move
+     */
     @Override
     public int getLastWordPlayedScore() {
         return highestScoring;
@@ -339,6 +367,7 @@ public class CPUPlayer extends Player {
             return;
         }
 
+        //Make sure the word is played off of an anchor tile
         int i;
         for (i = currentStartPos.getCol(); i <= currentEndPos.getCol(); i++) {
             if (anchorPos.getCol() == i && anchorPos.getRow() == currentStartPos.getRow()) {

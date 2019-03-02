@@ -56,12 +56,20 @@ public abstract class Player {
      * Takes a turn for the player, implemented
      * by child class
      * @param dict the dictionary to use for checking valid plays
-     * @return
+     * @return 0 if the
      */
     abstract public int takeTurn(Dictionary dict);
 
+    /**
+     * Gets the last word that this player played
+     * @return the string that was the last word this player played
+     */
     abstract public String getLastWordPlayed();
 
+    /**
+     * Gets the last word score that this player played
+     * @return the int that was how many points they got for the last word
+     */
     abstract public int getLastWordPlayedScore();
 
 }

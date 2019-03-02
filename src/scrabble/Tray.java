@@ -123,6 +123,17 @@ public class Tray {
     }
 
     /**
+     * Replaces the tile t with another random tile from the bag
+     * @param manager the tile manager to draw from
+     * @param t the tile to replace
+     */
+    public void replace(TileManager manager, Tile t) {
+        tiles.remove(t);
+        manager.putBack(t);
+        tiles.add(manager.drawOne());
+    }
+
+    /**
      * Add a tile to the tray
      * @param t the tile to be added
      */
@@ -130,21 +141,81 @@ public class Tray {
         tiles.add(t);
     }
 
-    public void setDragAndDrop(HBox hand, GridPane board, BiConsumer<Tile, Position> droppedCallback, Consumer<Tile> returnedCallback) {
+    /**
+     * Sets up drag and drop for all of the tiles currently on the tray
+     * @param hand the HBox representing the playes hand
+     * @param board the GridPane representing the board
+     * @param droppedCallback A Callback for when a tile gets
+     *                        dropped onto the board
+     * @param returnedCallback A Callback for when a tile gets
+     *                         returned from the board
+     */
+    public void setDragAndDrop(HBox hand,
+                               GridPane board,
+                               BiConsumer<Tile, Position> droppedCallback,
+                               Consumer<Tile> returnedCallback) {
         dragAndDrop = true;
+        //Loop through all and set
         for (Tile t : tiles) {
-            t.setDragAndDrop(hand, board, droppedCallback, returnedCallback);
+            t.setDragAndDrop(hand,
+                    board,
+                    droppedCallback,
+                    returnedCallback);
         }
     }
 
+    /**
+     * Check if the tray contains the tile that has the pane
+     * pane
+     * @param pane the pane of a tile to check for
+     * @return true if the tray has a tile which display matches pane
+     * otherwise false
+     */
+    public boolean contains(Pane pane) {
+        for (Tile t : tiles) {
+            if (t.getDisplay() == pane) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the tile whose display matches the pane
+     * @param pane the pane to match to a tile display
+     * @return the tile that is found otherwise null
+     */
+    public Tile getTile(Pane pane) {
+        for (Tile t : tiles) {
+            if (t.getDisplay() == pane) {
+                return t;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if the tray is set to drag and drop
+     * @return the member boolean drag and drop
+     */
     public boolean isDragAndDrop() {
         return dragAndDrop;
     }
 
+    /**
+     * Check if the tray is empty
+     * @return if tiles is empty
+     */
     public boolean isEmpty() {
         return tiles.isEmpty();
     }
 
+    /**
+     * The string representation of the tiles
+     * @return The string representing the current tray
+     */
     @Override
     public String toString() {
         return tiles.toString();

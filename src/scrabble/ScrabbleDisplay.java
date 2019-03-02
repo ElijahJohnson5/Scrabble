@@ -17,6 +17,8 @@ public class ScrabbleDisplay {
     private @FXML HBox computerHand;
     private @FXML GridPane board;
     private @FXML HBox playerHand;
+    private @FXML VBox rightSide;
+    private @FXML Label exchange;
     private @FXML Button playMove;
     private @FXML Label computerScore;
     private @FXML Label playerScore;
@@ -39,10 +41,16 @@ public class ScrabbleDisplay {
         playerHand.setBackground(new Background(new BackgroundFill(Color.LIGHTSLATEGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
         computerScore.setFont(new Font(40));
         playerScore.setFont(new Font(40));
+
+        rightSide.setOnMouseDragOver(mouseDragEvent -> exchange.setVisible(true));
+
+        rightSide.setOnMouseDragExited(mouseDragEvent -> exchange.setVisible(false));
     }
 
     public void setupForUserPlayer(UserPlayer user, Dictionary dict) {
-        playMove.setOnMouseClicked(mouseEvent -> user.attemptPlayMove(dict));
+        playMove.setOnMouseClicked(mouseEvent -> user.attemptPlayMove(mouseEvent, dict));
+        rightSide.setOnMouseDragReleased(user::exchangeTile);
+        playerHand.setOnMouseDragReleased(user::resetTile);
     }
 
     public void updateScore(int score, Player player) {

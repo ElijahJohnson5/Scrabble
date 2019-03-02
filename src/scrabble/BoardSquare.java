@@ -132,6 +132,10 @@ public class BoardSquare {
         }
     }
 
+    /**
+     * Places a tile temporarily
+     * @param t the tile to place
+     */
     public void placeTile(Tile t) {
         this.tile = t;
         if (pane != null) {
@@ -140,6 +144,9 @@ public class BoardSquare {
         }
     }
 
+    /**
+     * Undo a place tile call
+     */
     public void unPlaceTile() {
         this.tile = null;
         pane = oldPane;

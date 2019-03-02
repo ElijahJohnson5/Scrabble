@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 
 public class ScrabbleGui extends Application {
     private Player currentPlayer;
-    public final static boolean DEBUG_PRINT = true;
+    public final static boolean DEBUG_PRINT = false;
     private final static String LETTER_DIS = "/default_letter_distributions.txt";
     private final static String DEFAULT_BOARD = "/default_board.txt";
 
@@ -26,7 +26,8 @@ public class ScrabbleGui extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("scrabble_display.fxml"));
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("scrabble_display.fxml"));
         Parent root;
         try {
             root = loader.load();
@@ -76,8 +77,7 @@ public class ScrabbleGui extends Application {
                         //end game
                         this.stop();
                         if (DEBUG_PRINT) {
-                            long end = System.nanoTime();
-                            System.out.println("Game took " + (end - start) / 1000000 + "ms");
+                            System.out.println("Game took " + (System.nanoTime() - start) / 1000000 + "ms");
                         }
                     } else {
                         controller.updateScore(currentPlayer.getLastWordPlayedScore(), currentPlayer);
@@ -86,7 +86,6 @@ public class ScrabbleGui extends Application {
                 }
             }
         };
-        //Play three moves used for testing
         timer.start();
     }
 }

@@ -98,11 +98,13 @@ Compiled with java 10
   * The game will end when one player is out of tiles and the bag is empty
   * After the game is over you can choose to play again or exit
   * Final score is calculated based on total score minus the score of all tiles left in your hand
+
 ### Program Entry Point
 The entry point for the gui version is the ScrabbleGui.main function
 
 #### Known Bugs
 * When moving a tile from one spot on the board to another an exception is thrown from javafx, it doesn't seem to break anything and there is no way to catch it
 * When moving a blank from one spot on the board to another there is a null pointer exception seems to run fine after it
+
 #### Unfinished Features
 * Exchanging all tiles at once

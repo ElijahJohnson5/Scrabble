@@ -236,6 +236,7 @@ public class Board {
                                 || tiles.get(j).isBlank()) {
                             toPlay = tiles.get(j);
                             if (initGui) {
+                                toPlay.unHide();
                                 toPlay.changeBlankText(word.charAt(i));
                             }
                             toPlay.setCharacter(word.charAt(i));

@@ -103,6 +103,6 @@ The entry point for the gui version is the ScrabbleGui.main function
 
 #### Known Bugs
 * When moving a tile from one spot on the board to another an exception is thrown from javafx, it doesn't seem to break anything and there is no way to catch it
-
+* When moving a blank from one spot on the board to another there is a null pointer exception seems to run fine after it
 #### Unfinished Features
 * Exchanging all tiles at once

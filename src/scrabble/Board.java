@@ -66,6 +66,7 @@ public class Board {
      */
     public boolean initialize(BufferedReader br, TileManager tileManager) {
         this.tileManager = tileManager;
+        isEmpty = true;
         try {
             String line;
             line = br.readLine();
@@ -112,7 +113,8 @@ public class Board {
                     //Word multiplier
                     tiles[i][j] = new BoardSquare(
                             Integer.parseInt(s.substring(1, 2)), false);
-                } else if ((s.charAt(1) == '.' && s.charAt(0) == '.') || (s.charAt(0) == '1' && s.charAt(1) == '1')) {
+                } else if ((s.charAt(1) == '.' && s.charAt(0) == '.')
+                        || (s.charAt(0) == '1' && s.charAt(1) == '1')) {
                     //Default multipliers
                     tiles[i][j] = new BoardSquare();
                 }
@@ -156,6 +158,7 @@ public class Board {
      * Initialize the display of the board for the gui
      */
     private void initializeDisplay() {
+        board.getChildren().clear();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 //Get displays for each BoardSquare

@@ -38,6 +38,8 @@ public class ScrabbleDisplay {
         board.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         computerHand.setBackground(new Background(new BackgroundFill(Color.LIGHTSLATEGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
         playerHand.setBackground(new Background(new BackgroundFill(Color.LIGHTSLATEGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+        computerScore.setText("0");
+        playerScore.setText("0");
         computerScore.setFont(new Font(40));
         playerScore.setFont(new Font(40));
     }

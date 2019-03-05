@@ -103,6 +103,12 @@ public class UserPlayer extends Player {
             currentMove.clear();
             return 0;
         } else if (finishExchangeMove) {
+            if (!currentMove.isEmpty()) {
+                board.resetPlaced();
+                hand.getChildren().clear();
+                hand.getChildren().addAll(tray.getTileDisplay());
+            }
+
             //They exchanged tiles this turn instead of playing a word
             finishExchangeMove = false;
             exchanging = false;
@@ -194,7 +200,7 @@ public class UserPlayer extends Player {
                 //Get the tile from the pane
                 Tile t = tray.getTile(p);
                 //If it was on the board we need to fire an event to the board
-                if (p.getParent().equals(board)) {
+                if (p.getParent() == null) {
                     DropEvent dropEvent = new DropEvent(null, t, true);
                     //Fire the dropEvent (really a reset)
                     board.fireEvent(dropEvent);

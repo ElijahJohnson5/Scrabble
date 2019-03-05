@@ -124,7 +124,9 @@ public class Tile {
                 DropEvent drop = new DropEvent(pos, this, true);
                 //Fire a drop event, that is really a reset
                 board.fireEvent(drop);
-                hand.getChildren().add(tile);
+                if (!hand.getChildren().contains(tile)) {
+                    hand.getChildren().add(tile);
+                }
                 //Call returned callback
                 returnedCallback.accept(this);
                 tile.setTranslateY(0);

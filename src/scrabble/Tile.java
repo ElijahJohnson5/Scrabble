@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 public class Tile {
     private char character;
     private int score;
+    private boolean hidden;
 
     //GUI
     private Pane tile;
@@ -202,6 +203,23 @@ public class Tile {
      */
     public int getScore() {
         return score;
+    }
+
+    public void hide() {
+        if (tile == null) {
+            createDisplay();
+        }
+        if (!hidden) {
+            hidden = true;
+            tile.getChildren().remove(1, 3);
+        }
+    }
+
+    public void unHide() {
+        if (hidden) {
+            hidden = false;
+            createDisplay();
+        }
     }
 
     /**

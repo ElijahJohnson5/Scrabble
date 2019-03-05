@@ -127,6 +127,7 @@ public class BoardSquare {
         this.wordMultiplier = 1;
         this.letterMultiplier = 1;
         placed = true;
+        t.unHide();
         if (pane != null) {
             this.pane = t.getDisplay();
         }

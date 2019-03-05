@@ -61,6 +61,7 @@ public class CPUPlayer extends Player {
         legalMoves = new HashSet<>();
         currentMove = new ArrayList<>();
         highestMove = new ArrayList<>();
+        tray.hideTray();
         hand.getChildren().addAll(tray.getTileDisplay());
         resetValues();
     }
@@ -139,6 +140,7 @@ public class CPUPlayer extends Player {
         //Redraw up to seven tiles if possible
         if (!manager.isEmpty()) {
             tray.redrawToSeven(manager);
+            tray.hideTray();
         }
         if (hand != null) {
             hand.getChildren().addAll(tray.getTileDisplay());

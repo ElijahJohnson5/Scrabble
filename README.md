@@ -85,6 +85,19 @@ Compiled with java 10
   * Run the command `java -jar Scrabble.jar`
   * Play the game
   
+* How to play
+  * The first player is chosen based on the rule of drawing one tile from the bag
+  and comparing it to the other player whoever is close to A or
+  if they have a blank
+  * You can drag and drop tiles onto the board to make a word
+  * You can drag and drop tiles to the right side (where the scoring is)
+  to exchange the tile, you can exchange up to 7 tiles, it does use your turn
+  * To finish exchanging click end turn. To try and play the word
+  you played click end turn.
+  * The computer will then take its turn
+  * The game will end when one player is out of tiles and the bag is empty
+  * After the game is over you can choose to play again or exit
+  * Final score is calculated based on total score minus the score of all tiles left in your hand
 ### Program Entry Point
 The entry point for the gui version is the ScrabbleGui.main function
 
@@ -92,5 +105,4 @@ The entry point for the gui version is the ScrabbleGui.main function
 * When moving a tile from one spot on the board to another an exception is thrown from javafx, it doesn't seem to break anything and there is no way to catch it
 
 #### Unfinished Features
-* Showing who won the game
-* Starting a new game without restarting the jar
+* Exchanging all tiles at once

@@ -71,6 +71,12 @@ public class Tray {
         return false;
     }
 
+    public void hideTray() {
+        for (Tile t : tiles) {
+            t.hide();
+        }
+    }
+
     /**
      * Get the size of the tray
      * should never be greater than seven

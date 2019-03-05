@@ -67,6 +67,7 @@ public class Board {
     public boolean initialize(BufferedReader br, TileManager tileManager) {
         this.tileManager = tileManager;
         isEmpty = true;
+        overridden.clear();
         try {
             String line;
             line = br.readLine();
@@ -95,6 +96,11 @@ public class Board {
         return true;
     }
 
+    /**
+     * Pareses a line of a board
+     * @param line the current line of the board
+     * @param i the current row of the board
+     */
     private void parseLine(String line, int i) {
         if (line == null) {
             System.out.println("File format is incorrect");
@@ -762,7 +768,7 @@ public class Board {
             Position oldPos = overridden.get(t);
             tiles[oldPos.getRow()][oldPos.getCol()].unPlaceTile();
             //Reset display at old pos
-            Pane p = this.tiles[oldPos.getRow()][oldPos.getCol()].getDisplay();
+            Pane p = tiles[oldPos.getRow()][oldPos.getCol()].getDisplay();
             GridPane.setColumnIndex(p, oldPos.getCol());
             GridPane.setRowIndex(p, oldPos.getRow());
             board.getChildren().set(oldPos.getRow() * size + oldPos.getCol(), p);

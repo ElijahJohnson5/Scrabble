@@ -205,6 +205,9 @@ public class Tile {
         return score;
     }
 
+    /**
+     * Hides a tile from being displayed
+     */
     public void hide() {
         if (tile == null) {
             createDisplay();
@@ -215,6 +218,9 @@ public class Tile {
         }
     }
 
+    /**
+     * Un hides a tile, makes it displayed
+     */
     public void unHide() {
         if (hidden) {
             hidden = false;

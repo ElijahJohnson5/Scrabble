@@ -81,7 +81,10 @@ public class UserPlayer extends Player {
         if (playMove) {
             //Play the word
             List<Tile> moves = new ArrayList<>(currentMove.keySet());
-            board.playWord(currentWord, new ArrayList<>(currentMove.keySet()), startPos, endPos);
+            board.playWord(currentWord,
+                    new ArrayList<>(currentMove.keySet()),
+                    startPos,
+                    endPos);
             playMove = false;
             //Remove used tiles
             tray.removeAll(moves);

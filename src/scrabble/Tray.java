@@ -33,8 +33,8 @@ public class Tray {
      */
     public List<Pane> getTileDisplay() {
         List<Pane> displays = new ArrayList<>();
-        for (int i = 0; i < tiles.size(); i++) {
-            displays.add(tiles.get(i).getDisplay());
+        for (Tile tile : tiles) {
+            displays.add(tile.getDisplay());
         }
         return displays;
     }
@@ -204,6 +204,10 @@ public class Tray {
         return null;
     }
 
+    /**
+     * Gets the score of the remaining tiles on the tray
+     * @return the sum of the tiles values on the tray
+     */
     public int getTrayScore() {
         int sum = 0;
         for (Tile t : tiles) {

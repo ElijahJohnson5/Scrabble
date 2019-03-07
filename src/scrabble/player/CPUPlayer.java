@@ -249,6 +249,9 @@ public class CPUPlayer extends Player {
                     if (tray.isInTray(key)) {
                         //Remove it but save the tile to be added back later
                         Tile t = tray.removeFromTray(key);
+                        if (t.isBlank()) {
+                            t.setCharacter(key);
+                        }
                         //Add to the current move we are building
                         currentMove.add(t);
                         //Get the correct start position for the word, based off of the limit
@@ -261,6 +264,10 @@ public class CPUPlayer extends Player {
                                 limit - 1, anchor, board, crossChecks);
                         currentStartPos = new Position(currentStartPos.getRow(),
                                 currentStartPos.getCol() + 1);
+                        if (t.isBlank()) {
+                            t.setCharacter('*');
+                        }
+
                         //Remove from the current move
                         //and add back to the tray
                         currentMove.remove(t);
@@ -331,6 +338,10 @@ public class CPUPlayer extends Player {
                         //Save tile to be added back later
                         Tile t = tray.removeFromTray(key);
                         currentMove.add(t);
+
+                        if (t.isBlank()) {
+                            t.setCharacter(key);
+                        }
                         //Call recursively on the partialWord + key the node
                         // transitioned to the key and update the current
                         // we are on
@@ -338,6 +349,9 @@ public class CPUPlayer extends Player {
                                 new Position(square.getRow(),
                                         square.getCol() + 1),
                                 board, crossChecks);
+                        if (t.isBlank()) {
+                            t.setCharacter('*');
+                        }
                         currentMove.remove(t);
                         tray.addToTray(t);
                     }

@@ -108,6 +108,10 @@ public class TileManager {
         return tray;
     }
 
+    /**
+     * Check if the bag is empty
+     * @return bag.isEmpty();
+     */
     public boolean isEmpty() {
         return bag.isEmpty();
     }

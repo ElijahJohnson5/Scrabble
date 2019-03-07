@@ -75,9 +75,12 @@ public class CommandLineSolver {
             System.out.println("Enter board and tray");
             long start = System.currentTimeMillis();
             //Find the best move
-            commandLineSolver.findBest(in);
-            long end = System.currentTimeMillis();
-            System.out.println("Time to find move: " + (end - start) + "ms");
+            if (!commandLineSolver.findBest(in)) {
+                System.out.println("Could not find best, board file is incorrect");
+            } else {
+                long end = System.currentTimeMillis();
+                System.out.println("Time to find move: " + (end - start) + "ms");
+            }
         }
     }
 
@@ -85,10 +88,13 @@ public class CommandLineSolver {
      * Finds the best move based on a board state and
      * tray
      * @param in where to read the board from and the tray from
+     * @return true if it was able to find best otherwise false
      */
-    private void findBest(Scanner in) {
+    private boolean findBest(Scanner in) {
         //Initialize the board based on stdin
-        board.initialize(in, manager);
+        if (!board.initialize(in, manager)) {
+            return false;
+        }
         String lastLine = in.nextLine();
         lastLine = lastLine.toUpperCase();
         List<Tile> tray = new ArrayList<>();
@@ -107,5 +113,6 @@ public class CommandLineSolver {
                 cpuPlayer.getLastWordPlayedScore());
         System.out.println("Word played: " +
                 cpuPlayer.getLastWordPlayed());
+        return true;
     }
 }

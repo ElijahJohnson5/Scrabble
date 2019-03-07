@@ -82,7 +82,9 @@ public class Board {
             //Next size lines are the board
             for (int i = 0; i < size; i++) {
                 line = br.readLine();
-                parseLine(line, i);
+                if (!parseLine(line, i)) {
+                    return false;
+                }
             }
         } catch (IOException e) {
             System.out.println("Could not open the board file");
@@ -101,10 +103,10 @@ public class Board {
      * @param line the current line of the board
      * @param i the current row of the board
      */
-    private void parseLine(String line, int i) {
+    private boolean parseLine(String line, int i) {
         if (line == null) {
             System.out.println("File format is incorrect");
-            return;
+            return false;
         }
         //Split by spaces for each board square
         String[] values = line.split(" ");
@@ -140,14 +142,16 @@ public class Board {
                 j++;
             }
         }
+        return true;
     }
 
     /**
      * Initialize this board from a scanner
      * @param in the scanner of system.in
      * @param manager the tile manager, used for scoring
+     * @return true if it was able to initialize, otherwise false
      */
-    public void initialize(Scanner in, TileManager manager) {
+    public boolean initialize(Scanner in, TileManager manager) {
         this.tileManager = manager;
         size = in.nextInt();
         in.nextLine();
@@ -156,8 +160,12 @@ public class Board {
         //Read in line by line up to size
         for (int i = 0; i < size; i++) {
             line = in.nextLine();
-            parseLine(line, i);
+            if (!parseLine(line, i)) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     /**

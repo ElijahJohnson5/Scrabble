@@ -9,9 +9,15 @@ Compiled with Java 10
   * An easier way is to have the board in a file and redirect it to stdin `java -jar CommandLineSolver.jar [Dictionary file] < [Test Cases]`
   * There are example test cases in [test.txt](https://csgit.cs.unm.edu/ejohnson5/Scrabble/blob/master/resources/test.txt) and a scrabble dictionary in [sowpods.txt](https://csgit.cs.unm.edu/ejohnson5/Scrabble/blob/master/resources/sowpods.txt) for use
   * To Run with these test cases you would run (assuming they are all in the same directory) `java -jar CommandLineSolver.jar sowpods.txt < test.txt`
-
+  * If you do not pass a dictionary file it will fail out
+  
 #### Known Bugs
-There are no known bugs with the command line solver this far
+There are no known bugs with the command line solver thus far
+
+#### Unfinished Features
+* Board configurations must be in the correct format otherwise parsing will just fail
+wanted to add better error checking
+
 
 #### Board Configuration
 The board configurations that are supported are
@@ -105,7 +111,7 @@ The entry point for the gui version is the ScrabbleGui.main function
 #### Known Bugs
 * When moving a tile from one spot on the board to another an exception is thrown from javafx, it doesn't seem to break anything and there is no way to catch it
 * When moving a blank from one spot on the board to another there is a null pointer exception seems to run fine after it
-* Some bugs pop up when you are playing the game after you have already finished one game
+* Some bugs pop up when you are playing the game after you have already finished one game (probably best to not choose play again once the game has finished)
 #### Unfinished Features
-* Exchanging all tiles at once
+* Exchanging all tiles at once (right now you can only do one at a time)
 * Make playing more than one game work

@@ -33,6 +33,7 @@ cmake-build-release/
 out/
 .idea/
 META-INF/
+*.iml
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

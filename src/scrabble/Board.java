@@ -253,7 +253,9 @@ public class Board {
                                 toPlay.unHide();
                                 toPlay.changeBlankText(word.charAt(i));
                             }
-                            toPlay.setCharacter(word.charAt(i));
+                            if (toPlay.isBlank()) {
+                                toPlay.setCharacter(word.charAt(i));
+                            }
                             break;
                         }
                     }

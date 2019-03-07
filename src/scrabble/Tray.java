@@ -71,6 +71,9 @@ public class Tray {
         return false;
     }
 
+    /**
+     * Hides the tiles in the tray from the user
+     */
     public void hideTray() {
         for (Tile t : tiles) {
             t.hide();

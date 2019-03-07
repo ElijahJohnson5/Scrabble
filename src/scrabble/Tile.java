@@ -182,11 +182,15 @@ public class Tile {
         return tile;
     }
 
-    public Pane getDisplay(boolean newDisplay) {
-        if (newDisplay) {
+    /**
+     * Creates a new display, or does nothing
+     * @param newDisplay if true creates a new display, other wise returns
+     *                   current display
+     */
+    public void getDisplay(boolean newDisplay) {
+        if (newDisplay || tile == null) {
             createDisplay();
         }
-        return tile;
     }
 
     /**

@@ -30,7 +30,8 @@ public class CommandLineSolver {
      */
     public CommandLineSolver(BufferedReader br) {
         System.out.println("Initializing dictionary");
-        dict = DictionaryFactory.createDict(DictionaryFactory.DictionaryType.DAWG);
+        dict = DictionaryFactory.createDict(
+                DictionaryFactory.DictionaryType.DAWG);
         dict.insert(br);
         board = new Board();
         cpuPlayer = null;
@@ -76,10 +77,12 @@ public class CommandLineSolver {
             long start = System.currentTimeMillis();
             //Find the best move
             if (!commandLineSolver.findBest(in)) {
-                System.out.println("Could not find best, board file is incorrect");
+                System.out.println("Could not find best, " +
+                        "board file is incorrect");
             } else {
                 long end = System.currentTimeMillis();
-                System.out.println("Time to find move: " + (end - start) + "ms");
+                System.out.println("Time to find move: "
+                        + (end - start) + "ms");
             }
         }
     }
